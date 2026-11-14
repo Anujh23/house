@@ -40,7 +40,7 @@ p{margin:0;max-width:74ch} .muted{color:var(--muted)}
 .rail{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
 .grp{display:grid;gap:8px}
 .lab{font:500 .72rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.seg{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
 .seg button{font:500 .84rem var(--body);border:0;background:transparent;color:var(--ink);padding:8px 4px;cursor:pointer}
 .seg button+button{border-left:1px solid var(--line)}
 .seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
@@ -94,7 +94,6 @@ td.num,th.num{text-align:right;white-space:nowrap} tr.total td{font-weight:600}
           <button type="button" data-view="ground" aria-pressed="false">Ground</button>
           <button type="button" data-view="first" aria-pressed="false">First</button>
           <button type="button" data-view="north" aria-pressed="false">North</button>
-          <button type="button" data-view="room" aria-pressed="false">Your room</button>
         </div>
         <label class="chk"><input type="checkbox" id="t-labels"> Labels</label>
         <label class="chk"><input type="checkbox" id="t-rotate"> Slow auto-rotate</label>
@@ -129,7 +128,7 @@ td.num,th.num{text-align:right;white-space:nowrap} tr.total td{font-weight:600}
   <div class="cards">
     <div class="card"><span class="k">Vastu-first layout</span><h3>Parents SW, you right above</h3><p class="muted">Bedroom 1 (parents) sits in the SW with a walk-in dressing room and an <b>attached bathroom</b>. Your master is <b>stacked exactly on top</b>, the same as Bhai's house: same walls, dressing and bath above dressing and bath, so the plumbing runs straight down.</p></div>
     <div class="card"><span class="k">NE · living + mandir</span><h3>Sleeping-D arched glass</h3><p class="muted">The living room moves to the light NE corner and one 25½′ sleeping-D glass wall running across the living and dining. The mandir sits in the <b>NE corner</b> with only open terrace above it.</p></div>
-    <div class="card"><span class="k">Your room</span><h3>Big south glass + balcony</h3><p class="muted">A 9′ glass slider opens onto a 4′ balcony under a 5′ roof overhang. Winter sun comes in and warms the room; summer sun is blocked. <b>Direct morning sun:</b> it shines through the stair hall's full-height east glass, across the open stair, and through your full-height inner glass. Mid-morning, an east clerestory over the bed side lets it fall deeper into the room.</p></div>
+    <div class="card"><span class="k">Your room</span><h3>Big south glass + balcony</h3><p class="muted">A 9′ glass slider opens onto a 4′ balcony under a 5′ roof overhang. Winter sun comes in and warms the room; summer sun is blocked. Your work desk sits under an inner glass panel that borrows morning light from the stair hall.</p></div>
     <div class="card"><span class="k">Kitchen · SE</span><h3>Closed kitchen, cook faces east</h3><p class="muted">The kitchen is back in the SE, Vastu's best spot: a closed 11′ × 14′ room with an L-counter, the hob on the east counter, the sink at the NE end, fridge and pantry on the west. Its door opens onto the centre, near the dining.</p></div>
   </div>
 
@@ -199,9 +198,7 @@ td.num,th.num{text-align:right;white-space:nowrap} tr.total td{font-weight:600}
       <tr><td>Cool roof + XPS over the master</td><td class="num">+0.4 to +0.9</td></tr>
       <tr><td>Upper lounge, ~100 sqft, with glass on the north + east</td><td class="num">+2.0 to +2.6</td></tr>
       <tr><td>East deck (WPC) + pergola + north planter beds</td><td class="num">+0.8 to +1.4</td></tr>
-      <tr><td>Morning-sun path: full-height east glass on the stair hall + full-height inner glass</td><td class="num">+0.6 to +0.9</td></tr>
-      <tr><td>East clerestory over the master (raised ceiling bay + glass strip)</td><td class="num">+0.6 to +1.0</td></tr>
-      <tr class="total"><td>Net extra → <b>about ₹39–44L</b> for the house (skip the upper lounge → ₹37–41L)</td><td class="num">+9.4 to +14.7</td></tr>
+      <tr class="total"><td>Net extra → <b>about ₹38–42L</b> for the house (skip the upper lounge to stay near ₹36–39L)</td><td class="num">+8.2 to +12.8</td></tr>
     </tbody>
   </table></div>
 </div>
@@ -458,14 +455,14 @@ function build(scene){
   wall(f,'F',12,13,12,20,F0,FH,[W(17.4,19.4,4.5,7,{mull:1})],{out:1});
   wall(f,'F',0,13,15,13,F0,FH,[D(2,4.5),D(12.3,14.8,8,{panel:true})],{extend:false});
   wall(f,'F',6,13,6,20,F0,FH,[D(14,16.5)],{t:.4});
-  wall(f,'F',15,0,15,13,F0,FH,[W(1,11,.5,9.6,{mull:3})],{t:.5}); // full-height inner glass: the sun crosses the stair void straight into the master (curtain for privacy)
+  wall(f,'F',15,0,15,13,F0,FH,[W(3,9,3.5,8,{mull:2})],{t:.5}); // inner glass: borrows east light from the stair hall
   wall(f,'F',12,17,19,17,F0,FH,[D(15.5,18,7.5,{panel:true})],{out:1,extend:false});
   wall(f,'F',19,11.5,19,17,F0,FH,[O(12,16.6,8)]);                                   // lobby opens into the upper lounge
   wall(f,'F',19,11.5,31,11.5,F0,FH,[W(19.6,26.4,3,8,{mull:2})],{extend:false});     // inner glass looking down the stair
   wall(f,'F',19,20,31,20,F0,FH,[W(20,30,.3,9.2,{mull:4})],{out:1});                 // north glass sliders to the terrace garden
   wall(f,'F',31,11.5,31,20,F0,FH,[W(13,18.5,0,8.5,{mull:2})],{out:1});              // glass door to the east deck
   box(f,.2,5.3,-.56,-.38,F0,F1,M.wood);                                             // wood-cladding accent on the master's south face
-  wall(f,'F',27,0,27,11.5,F0,FH,[W(1,10.5,.5,9.6,{mull:3})],{out:1});   // full-height EAST glass: morning sun into the stair hall
+  wall(f,'F',27,0,27,11.5,F0,FH,[W(4,8,4,7,{mull:1})],{out:1});
   /* ---- furniture: first floor ---- */
   bed(f,'F',.4,5.4,.4,6.9,F0,'S'); fbox(f,'F',5.6,6.8,.4,1.8,F0,F0+2,M.walnut);   // head to the south (Vastu)
   sofa(f,'F',9,11.4,1,3.4,F0,'N'); rug(f,1,8,7.4,11.6,F0);
@@ -492,15 +489,9 @@ function build(scene){
   label('F','Work desk','under the inner glass',13.5,7,F0+5); label('F','Pergola','',34.4,26.5,F0+10); label('F','Lobby','',15.5,15,F0+1.6);
 
   /* ---------- roofs ---------- */
-  box(fr,-.4,9,-5,20.4,F1,R1+.5,M.white); box(fr,9,15.4,-5,0,F1,R1+.5,M.white); box(fr,9,15.4,11.6,20.4,F1,R1+.5,M.white);
-  // east clerestory: raised ceiling bay with a strip of east glass above the stair-hall roof → mid-morning sun deep onto the bed side
-  box(fr,9,15.75,-.4,.35,F1,R1+3.2,M.white); box(fr,9,15.75,11.25,12,F1,R1+3.2,M.white); box(fr,8.6,9.35,-.4,12,F1,R1+3.2,M.white);
-  box(fr,15,15.75,-.4,12,F1,R1+.3,M.white); box(fr,15.3,15.42,.4,11.2,R1+.3,R1+3.1,M.glass,false);
-  for(const yy of [.4,3.1,5.8,8.5,11.2]) box(fr,15.25,15.47,yy-.07,yy+.07,R1+.3,R1+3.1,M.char); box(fr,15.25,15.47,.4,11.2,R1+3.05,R1+3.15,M.char);
-  box(fr,8.4,16.8,-.6,12.2,R1+3.2,R1+3.7,M.white);
-  box(fr,-.4,15.4,-5,-.4,F1-.08,F1,M.wood,false); downlights(fr,.4,14.6,-4.6,-.6,F1-.08,3.6); // 5′ south overhang
+  box(fr,-.4,15.4,-5,20.4,F1,R1+.5,M.white); box(fr,-.4,15.4,-5,-.4,F1-.08,F1,M.wood,false); downlights(fr,.4,14.6,-4.6,-.6,F1-.08,3.6); // 5′ south overhang
   box(fr,15.4,27.4,-.4,11.9,F1,R1,M.white); box(fr,11.6,19.4,11.9,17.4,F1,R1,M.white); box(fr,18.6,31.6,11.1,20.6,F1,R1,M.white); box(fr,18.6,31.6,11.1,20.6,R1,R1+.04,M.terrace,false);
-  box(fr,-.4,9,-5,20.4,R1+.5,R1+.54,M.terrace,false); box(fr,9,15.4,11.6,20.4,R1+.5,R1+.54,M.terrace,false); box(fr,15.4,27.4,-.4,11.9,R1,R1+.04,M.terrace,false);
+  box(fr,-.4,15.4,-5,20.4,R1+.5,R1+.54,M.terrace,false); box(fr,15.4,27.4,-.4,11.9,R1,R1+.04,M.terrace,false);
   box(fr,1,4.4,1,4.4,R1+.5,R1+3.5,M.char); const tk2=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,3.6,24),M.tank);tk2.position.copy(P(2.7,R1+5.3,2.7));tk2.castShadow=true;fr.add(tk2); // SW tank = highest point
   Object.values(L).flat().forEach(o=>scene.add(o));
 }
@@ -521,10 +512,10 @@ if(renderer){
   const glow=[]; for(const [x,h,y] of [[12,8,27],[33,8,14],[32,19,13],[20,8,15],[31,8,29]]){const pl=new THREE.PointLight('#ffc77d',0,40,1.6);pl.position.copy(P(x,h,y));scene.add(pl);glow.push(pl);}
   build(scene);
   const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.maxPolarAngle=Math.PI*.495; controls.minDistance=20; controls.maxDistance=260; controls.autoRotateSpeed=.6;
-  const CAM={room:[[1.4,F0+5.4,11.2],[15,F0+4.2,4.5]],outside:[[98,20,4],[24,11,18]],north:[[25,18,96],[25,8,30]],ground:[[66,64,-20],[20,4,17]],first:[[-26,60,-36],[12,10,10]]};
-  const setCam=v=>{controls.minDistance=v==='room'?.5:20; camera.position.copy(P(CAM[v][0][0],CAM[v][0][1],CAM[v][0][2])); controls.target.copy(P(CAM[v][1][0],CAM[v][1][1],CAM[v][1][2])); controls.update();};
-  const apply=()=>{const v=state.view; G.groundRoof.visible=v!=='ground'; G.first.visible=v!=='ground'; G.firstRoof.visible=v==='outside'||v==='north'||v==='room';
-    L.G.forEach(o=>o.visible=state.labels&&v==='ground'); L.F.forEach(o=>o.visible=state.labels&&v==='first'); L.S.forEach(o=>o.visible=state.labels&&(v==='outside'||v==='north')); L.C.forEach(o=>o.visible=v!=='room');
+  const CAM={outside:[[98,20,4],[24,11,18]],north:[[25,18,96],[25,8,30]],ground:[[66,64,-20],[20,4,17]],first:[[-26,60,-36],[12,10,10]]};
+  const setCam=v=>{camera.position.copy(P(CAM[v][0][0],CAM[v][0][1],CAM[v][0][2])); controls.target.copy(P(CAM[v][1][0],CAM[v][1][1],CAM[v][1][2])); controls.update();};
+  const apply=()=>{const v=state.view; G.groundRoof.visible=v!=='ground'; G.first.visible=v!=='ground'; G.firstRoof.visible=v==='outside'||v==='north';
+    L.G.forEach(o=>o.visible=state.labels&&v==='ground'); L.F.forEach(o=>o.visible=state.labels&&v==='first'); L.S.forEach(o=>o.visible=state.labels&&(v==='outside'||v==='north')); L.C.forEach(o=>o.visible=true);
     document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));};
   document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view; if((state.view==='ground'||state.view==='first')&&!state.labels){state.labels=true;document.getElementById('t-labels').checked=true;} apply();setCam(state.view);}));
   document.getElementById('t-labels').addEventListener('change',e=>{state.labels=e.target.checked;apply();});
@@ -543,7 +534,7 @@ if(renderer){
     const hh=Math.floor(hr), mm=Math.round((hr-hh)*60), t=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`, out=document.getElementById('sun-out');
     if(alt<=0){out.innerHTML=`<b>${t}</b> · after sunset<br>Evening lights: soffit, arched living glass, warm glass.`;return;}
     let note='';
-    if(e>.25&&altD<35) note='☀ Low morning sun comes through the stair hall\'s east glass, across the open stair and the inner glass, straight into your room. Click “Your room” to see it.';
+    if(e>.25&&altD<35) note='Morning sun lights the east side: the kitchen, the living and the stair hall. Your room borrows it through the inner glass.';
     else if(e>.25) note='Mid-morning: east windows in sun; the north glass stays soft and glare-free.';
     else if(e<-.25) note='Hot afternoon sun is on the solid west wall with slits only. The neem and the dressing/bath block take it.';
     else note=decl<0?'Winter noon: low sun comes deep through your big south glass and warms the room.':'Summer noon: the 5′ overhang keeps the high sun off your big south glass.';
