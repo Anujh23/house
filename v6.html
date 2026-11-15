@@ -1,0 +1,713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Kherla Ghar v6</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: title band → 3D stage + controls → concept cards → two plans → glass table → cost delta */
+:root{
+  --bg:#f1e9dc; --surface:#faf5ec; --ink:#2b2219; --muted:#6e604f; --line:#e0d3bf; --accent:#a8642c; --accent2:#5b6f86; --sky:#e3dccd;
+  --room:#f5ecdc; --wet:#dde5e6; --kitchen:#f0dcc2; --sacred:#f2e2b0; --out:#e8dfcd; --circ:#ece3d3; --void:#e4e0d6;
+  --good:#2f7a4b; --warn:#a4631b;
+  --display:'Space Grotesk', system-ui, sans-serif; --body:'IBM Plex Sans', system-ui, 'Segoe UI', sans-serif; --mono:'IBM Plex Mono', ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#1c1712; --surface:#251f18; --ink:#efe6d8; --muted:#b3a58f; --line:#3a3127; --accent:#e0a064; --accent2:#a9bdd4; --sky:#241e18;
+  --room:#2e261d; --wet:#22292b; --kitchen:#33291d; --sacred:#3a3220; --out:#29231b; --circ:#2b251e; --void:#262420; --good:#6cc08d; --warn:#e0a35a; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#1c1712; --surface:#251f18; --ink:#efe6d8; --muted:#b3a58f; --line:#3a3127; --accent:#e0a064; --accent2:#a9bdd4; --sky:#241e18;
+  --room:#2e261d; --wet:#22292b; --kitchen:#33291d; --sacred:#3a3220; --out:#29231b; --circ:#2b251e; --void:#262420; --good:#6cc08d; --warn:#e0a35a; color-scheme:dark }
+*{box-sizing:border-box} [hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--body)}
+.wrap{max-width:1220px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:26px 60px;display:grid;gap:20px}
+h1{font:700 clamp(2rem,5vw,3rem)/1 var(--display);margin:0;letter-spacing:-.02em}
+h1 small{display:block;font:500 .8rem var(--mono);color:var(--accent);letter-spacing:.14em;text-transform:uppercase;margin-bottom:10px}
+h2{font:700 1.25rem/1.25 var(--display);margin:0}
+h3{font:600 .98rem/1.3 var(--body);margin:0 0 6px}
+p{margin:0;max-width:74ch} .muted{color:var(--muted)}
+.facts{display:flex;flex-wrap:wrap;gap:6px 20px;font:400 .82rem var(--mono);color:var(--muted)} .facts b{color:var(--ink);font-weight:500}
+.top{display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:16px;align-items:start}
+@media (max-width:880px){.top{grid-template-columns:minmax(0,1fr)}}
+.stage{position:relative;width:100%;aspect-ratio:16/10;min-height:380px;border-radius:12px;overflow:hidden;background:var(--sky);border:1px solid var(--line)}
+@media (max-width:600px){.stage{aspect-ratio:4/5}}
+.stage canvas{display:block}
+.hint{position:absolute;left:10px;bottom:10px;font:400 .75rem var(--mono);background:color-mix(in srgb,var(--surface) 82%,transparent);padding:4px 8px;border-radius:5px;pointer-events:none}
+.rail{display:grid;gap:14px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px}
+.grp{display:grid;gap:8px}
+.lab{font:500 .72rem var(--body);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.seg button{font:500 .84rem var(--body);border:0;background:transparent;color:var(--ink);padding:8px 4px;cursor:pointer}
+.seg button+button{border-left:1px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chk{display:flex;gap:8px;align-items:center;font-size:.9rem} .chk input{accent-color:var(--accent)}
+select,input[type=range]{width:100%;accent-color:var(--accent)}
+select{font:inherit;padding:6px 8px;border-radius:6px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.readout{font:400 .8rem/1.5 var(--mono);color:var(--muted);background:var(--bg);border-radius:6px;padding:8px 10px} .readout b{color:var(--ink);font-weight:500}
+.lbl{font:500 11px/1.2 var(--body);color:var(--ink);background:color-mix(in srgb,var(--surface) 90%,transparent);border:1px solid var(--line);padding:3px 7px;border-radius:5px;text-align:center;white-space:nowrap;pointer-events:none}
+.lbl span{display:block;font:400 10px var(--mono);color:var(--muted)}
+.lbl.hero{border-color:var(--accent);color:var(--accent)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;min-width:0}
+.card .k{font:500 .72rem var(--mono);color:var(--accent);letter-spacing:.1em;text-transform:uppercase;display:block;margin-bottom:6px}
+.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:880px){.plans{grid-template-columns:minmax(0,1fr)}}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
+figcaption{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px} figcaption span{font:400 .8rem var(--mono);color:var(--muted)}
+.svgbox{overflow-x:auto} .svgbox svg{display:block;width:100%;min-width:430px;height:auto}
+svg .r-room{fill:var(--room)} svg .r-wet{fill:var(--wet)} svg .r-kitchen{fill:var(--kitchen)} svg .r-sacred{fill:var(--sacred)} svg .r-out{fill:var(--out)} svg .r-circ{fill:var(--circ)} svg .r-void{fill:var(--void)}
+svg .wall{fill:var(--ink)} svg .win{fill:var(--surface);stroke:var(--accent2);stroke-width:.14} svg .door{fill:none;stroke:var(--muted);stroke-width:.1}
+svg .thin{fill:none;stroke:var(--muted);stroke-width:.08} svg .dash{fill:none;stroke:var(--muted);stroke-width:.12;stroke-dasharray:.6 .4}
+svg .sun{fill:none;stroke:var(--accent);stroke-width:.18}
+svg .t-name{font:600 1.05px var(--body);fill:var(--ink)} svg .t-dim{font:400 .8px var(--mono);fill:var(--muted)} svg .t-small{font:600 .78px var(--body);fill:var(--ink)}
+svg .t-acc{font:600 .95px var(--body);fill:var(--accent)} svg .t-acc2{font:600 .95px var(--body);fill:var(--accent2)} svg .arrow{fill:var(--ink)} svg .acc{fill:var(--accent)}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:8px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:500 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--bg)} tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap} tr.total td{font-weight:600}
+.pill{display:inline-block;font:500 .72rem var(--body);padding:1px 8px;border-radius:99px;border:1px solid currentColor} .pill.warn{color:var(--warn)} .pill.good{color:var(--good)}
+</style>
+
+<div class="wrap">
+  <div>
+    <h1><small>Kherla · v6 · Vastu layout · faces east</small>Kherla Ghar</h1>
+    <div class="facts" style="margin-top:12px">
+      <span>Ground <b>1,330</b> sqft · First <b>~610</b> sqft + gallery + deck · <b>22′</b> living</span>
+      <span>3 bedrooms · floor height <b>11′6″</b> · 21-step U-stair</span>
+      <span><b>Faces EAST</b>: road, gate, main door on the east</span>
+      <span>Glass on <b>N + E</b> · slits on <b>W</b> · no courtyard · no stack chimney</span>
+    </div>
+  </div>
+
+  <div class="top">
+    <div class="stage" id="stage"><div class="hint">drag · zoom · right-drag to pan</div></div>
+    <aside class="rail">
+      <div class="grp"><span class="lab">View</span>
+        <div class="seg" role="group" aria-label="View">
+          <button type="button" data-view="outside" aria-pressed="true">Outside</button>
+          <button type="button" data-view="ground" aria-pressed="false">Ground</button>
+          <button type="button" data-view="first" aria-pressed="false">First</button>
+          <button type="button" data-view="north" aria-pressed="false">North</button>
+        </div>
+        <label class="chk"><input type="checkbox" id="t-labels"> Labels</label>
+        <label class="chk"><input type="checkbox" id="t-rotate"> Slow auto-rotate</label>
+      </div>
+      <div class="grp"><span class="lab">Sun on site (28.35° N)</span>
+        <select id="s-season" aria-label="Day of year">
+          <option value="23.44" selected>21 June (summer)</option>
+          <option value="0">21 Mar / Sep</option>
+          <option value="-23.44">21 Dec (winter)</option>
+        </select>
+        <input type="range" id="s-hour" min="5.5" max="20.5" step="0.25" value="7.5" aria-label="Solar time">
+        <div class="readout" id="sun-out">—</div>
+        <span class="muted" style="font-size:.82rem">Try 7:30 am (sun into your room), 4 pm in June (the west wall takes the heat), then after sunset for the lights.</span>
+      </div>
+    </aside>
+  </div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Pilani climate</th><th>What the house does about it</th></tr></thead>
+    <tbody>
+      <tr><td><b>Sun</b>: hard west sun, 45 °C afternoons</td><td>Big glass only on the <b>north</b> (soft light all day) and <b>east</b> (morning). The west wall gets narrow slits only. South windows sit deep in box frames.</td></tr>
+      <tr><td><b>Loo</b>: hot W/SW wind, Apr–Jun</td><td>The west face is solid brick with bathrooms and the stair behind it as a buffer. A neem tree shades it.</td></tr>
+      <tr><td><b>Aandhi</b>: dust storms</td><td>A solid 4′ door and a closed foyer act as the buffer. Sliders and the arched window get brush seals. Frameless glass is limited to one balcony.</td></tr>
+      <tr><td><b>Heat through the roof</b></td><td>White cool-roof terrace everywhere, plus XPS insulation over your room. 9″ rat-trap walls with an air gap. The master's 5′ south overhang shades its big glass from April to September.</td></tr>
+      <tr><td><b>Cold nights</b>: ~5 °C in winter</td><td>Low winter sun reaches deep through your big south glass and warms the room.</td></tr>
+      <tr><td><b>Monsoon breeze</b> from the SW</td><td>North sliders and south windows open for cross-ventilation through the living and dining.</td></tr>
+      <tr><td><b>Water</b>: ~450 mm rain/yr</td><td>The roof drains into a 10,000 L tanka. Gravel and native plants instead of a lawn.</td></tr>
+      <tr><td><b>Earthquake zone III</b></td><td>RCC bands at plinth, lintel and roof. Cantilevers kept short (the balcony is 4′).</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="cards">
+    <div class="card"><span class="k">Vastu-first layout</span><h3>Parents SW, you right above</h3><p class="muted">Bedroom 1 (parents) sits in the SW with a walk-in dressing room and an <b>attached bathroom</b>. Your master is <b>stacked exactly on top</b>, the same as Bhai's house: same walls, dressing and bath above dressing and bath, so the plumbing runs straight down.</p></div>
+    <div class="card"><span class="k">NE · living + mandir</span><h3>Double-height living + Portal D</h3><p class="muted">The living is in the light NE corner, 22′ high. Its glass is a <b>Portal D</b>: half-round top, only 3 slim bars, set 2′ back inside a deep wood frame. The bottom slides open onto a shaded north patio and the top vents tilt open, so the room pulls in cool north air and lets hot air out at the top. The mandir sits in the NE corner with nothing above it.</p></div>
+    <div class="card"><span class="k">Your room</span><h3>Big south glass + balcony</h3><p class="muted">A 9′ glass slider opens onto a 4′ balcony under a 5′ roof overhang. Winter sun comes in and warms the room; summer sun is blocked. Your work desk sits under an inner glass panel that borrows morning light from the stair hall.</p></div>
+    <div class="card"><span class="k">Kitchen · SE</span><h3>Open kitchen, cook faces east</h3><p class="muted">The kitchen is back in the SE, Vastu's best spot: an 11′ × 14′ kitchen, <b>⅓ walled, ⅔ open</b> to the hall (the wall hides the hob and sink from the front door; the shoe cabinet sits on its foyer side) with an L-counter, the hob on the east counter, the sink at the NE end, fridge and pantry on the west. Its door opens onto the centre, near the dining.</p></div>
+  </div>
+
+  <div class="plans">
+    <figure><figcaption><h2>Ground floor</h2><span>north up · road + entry on the east (right)</span></figcaption><div class="svgbox" id="plan-g"></div></figure>
+    <figure><figcaption><h2>First floor</h2><span>master suite · upper lounge · gallery · deck</span></figcaption><div class="svgbox" id="plan-f"></div></figure>
+  </div>
+
+  <div><h2>Ventilation</h2><p class="muted" style="margin-top:6px">How air moves through every room. In Pilani the cool air is on the shaded north side, and hot air has to leave from the top of the house (stack effect). Every big glass panel has an opening part.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Room</th><th>Air comes in</th><th>Air goes out</th><th>Result</th></tr></thead>
+    <tbody>
+      <tr><td>Living (22′ high)</td><td>Portal-D sliding doors from the shaded north patio + the east window</td><td>4 top-hung vents at the top of the D, ~16′ up, + top vents in the upper east glass</td><td><span class="pill good">✓</span> stack effect</td></tr>
+      <tr><td>Centre hall + dining</td><td>Dining north sliders, then through the hall</td><td>Up the open stair into the <b>solar chimney</b> (louvred box on the roof)</td><td><span class="pill good">✓</span></td></tr>
+      <tr><td>Kitchen</td><td>East window over the sink + south window</td><td>Chimney over the hob ducted out through the east wall + exhaust fan</td><td><span class="pill good">✓</span> 2 walls</td></tr>
+      <tr><td>Bedroom 1 / Bedroom 2 / master</td><td>South glass / north glass / south slider</td><td>West slits on each (opposite side) + the stair for the master</td><td><span class="pill good">✓</span> cross</td></tr>
+      <tr><td>All 3 bathrooms</td><td>Door undercut</td><td>High window on an outside wall + exhaust fan</td><td><span class="pill good">✓</span></td></tr>
+      <tr><td>Upper lounge + gallery</td><td>East glass door to the deck, north terrace door</td><td>Living top vents + solar chimney</td><td><span class="pill good">✓</span></td></tr>
+      <tr><td>Store</td><td>Louvred door</td><td>Into the stair hall → solar chimney</td><td><span class="pill good">✓</span></td></tr>
+    </tbody>
+  </table></div>
+
+  <div><h2>Materials</h2><p class="muted" style="margin-top:6px">What each part of the model is made of. Rates are indicative 2025–26 Rajasthan prices, so get local quotes.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Part</th><th>Material / spec</th><th>Why for Pilani</th><th class="num">Indicative rate</th></tr></thead>
+    <tbody>
+      <tr><td>Foundation</td><td>Local Khetri stone masonry + RCC plinth band</td><td>Cheap local stone; band for seismic zone III</td><td class="num">₹550–950/t stone</td></tr>
+      <tr><td>Walls</td><td>9″ rat-trap bond red brick (local bhatta), RCC lintel + roof bands; 4½″ partitions</td><td>Air gap insulates, ~20% fewer bricks</td><td class="num">₹5–8/brick</td></tr>
+      <tr><td>Slabs</td><td>RCC M20, Fe500D TMT, 5½–6″ (engineer to confirm); filler slab where possible</td><td>13–14′ spans</td><td class="num">steel ₹58–67/kg</td></tr>
+      <tr><td>Exterior finish</td><td>Cement plaster + <b>textured elastomeric white</b> (Apex Ultima / WeatherCoat class), charcoal bands</td><td>Smooth white stains in dust; textured hides it</td><td class="num">₹18–28/sqft painted</td></tr>
+      <tr><td>Stone pier</td><td>Rough-dressed <b>Jodhpur / Dholpur sandstone</b> cladding, 25–30 mm, on a brick core</td><td>Local, warm, never needs paint</td><td class="num">₹80–280/sqft fixed</td></tr>
+      <tr><td>Floors</td><td><b>Polished Kota stone</b> throughout; white marble in the mandir; anti-skid R11 tiles in baths</td><td>Coolest underfoot, near zero maintenance</td><td class="num">₹50–140/sqft laid</td></tr>
+      <tr><td>Stair</td><td>Kota or granite treads on RCC; MS + toughened glass side guard</td><td>Durable, easy to clean</td><td class="num">₹140–230/sqft</td></tr>
+      <tr><td>North glass sliders</td><td>Slim black powder-coated aluminium, <b>toughened DGU</b> (no low-E needed), brush seals</td><td>North = no direct sun; seals keep dust out</td><td class="num">₹900–1,100/sqft</td></tr>
+      <tr><td>Master south glass</td><td><b>Low-E DGU</b> (SHGC ≈ 0.3) slim aluminium slider, 9′ wide, onto the balcony</td><td>Winter sun in; summer sun blocked by the 5′ overhang</td><td class="num">₹1,100–1,500/sqft</td></tr>
+      <tr><td>Portal D (living)</td><td>Two-storey glass, ~13½′ × 22′, <b>12 mm toughened laminated</b>, top cut to a half-round; only <b>3 slim bronze-finish steel bars</b>. Bottom 8′ = 4 sliding doors to the north patio; 4 top-hung vents under the arch. Set 2′ back inside a <b>deep wood portal</b> (teak-finish WPC or sal on a steel frame)</td><td>North-facing, so no heat; the portal shades the glass and cuts dust on it; the vents let hot air out</td><td class="num">₹3.0–4.4L</td></tr>
+      <tr><td>Main door</td><td>Solid 4′ × 8′6″ teak/sheesham-finish door, steel frame core, multi-point lock</td><td>Simple, secure, dust-tight</td><td class="num">₹30–60k</td></tr>
+      <tr><td>Balcony rail</td><td>Frameless <b>12 mm toughened laminated</b> glass in a base channel, black cap</td><td>Laminated stays in place if it breaks</td><td class="num">₹1,850–2,850/rft</td></tr>
+      <tr><td>West slits</td><td>Fixed toughened glass, 1½′ wide, deep reveal</td><td>Light without west heat</td><td class="num">₹350–600/sqft</td></tr>
+      <tr><td>Roof overhang soffit + fins</td><td><b>WPC or aluminium wood-finish</b> panels (not real timber); LED downlights</td><td>Real wood cracks and gets termites at 45 °C</td><td class="num">₹250–450/sqft ⚠️</td></tr>
+      <tr><td>Roofs / terraces</td><td>Waterproof membrane → 25–40 mm <b>XPS</b> (over master) → screed → <b>white cool-roof coat</b> or white china mosaic</td><td>Takes most of the heat out of the top room</td><td class="num">₹45–60/sqft combo</td></tr>
+      <tr><td>Doors</td><td>WPC frames + BWP flush shutters with laminate; WPC in baths</td><td>Termite- and moisture-proof</td><td class="num">₹3–5k/shutter</td></tr>
+      <tr><td>Kitchen</td><td>SE, closed</td><td>SE (Agni) is the best place</td><td><span class="pill good">✓</span></td><td>Cook faces east (hob on the east counter), sink at the NE end, fridge in the SW part</td></tr>
+      <tr><td>Wardrobes / dressing</td><td>BWP ply + laminate, loft to the ceiling</td><td>Dust-tight storage</td><td class="num">₹1,200–1,800/sqft face</td></tr>
+      <tr><td>Bathroom, ground (parents)</td><td>Dry zone in front, <b>walk-in shower</b> behind clear 8–10 mm toughened glass, no curb, SS linear drain; wall-hung WC + concealed cistern, wall-hung vanity; R11 matt anti-skid floor; SS 304 grab bars, fold-down seat, night light; sliding door; waterproofing on the floor + 6″ up the walls (shower walls to 6′); high window on the west wall + exhaust fan</td><td>Most falls happen in the bath; no-curb floor + bars make it safe for 20+ years</td><td class="num">₹0.9–1.2L</td></tr>
+      <tr><td>Bath, first (master)</td><td>Same layout + <b>fluted glass</b> panel, wood-look tile on the shower wall, LED niche, backlit mirror, brushed-gold CP (Jaquar / Hindware class), rain shower + hand shower; high window for air</td><td>Hotel feel; fittings with ceramic cartridges survive hard water</td><td class="num">₹1.5–1.9L</td></tr>
+      <tr><td>Water for the baths</td><td>Softener on the inlet + pressure pump for the first-floor shower; tiles in beige/greige matt, large format (2×4′) for fewer grout lines</td><td>Kherla water is hard: it whitens glass and kills cheap valves</td><td class="num">₹30–70k</td></tr>
+      <tr><td>Plumbing / water</td><td>CPVC supply, uPVC drainage, RO (drinking), softener (baths), FPC solar water heater, 10 kL tanka</td><td>High TDS / nitrate groundwater</td><td class="num">₹1.5–2.5L</td></tr>
+      <tr><td>Boundary + gate</td><td>Plastered brick wall, charcoal powder-coated MS horizontal-slat sliding gate</td><td>Low maintenance</td><td class="num">₹2.6–3.9L</td></tr>
+      <tr><td>Landscape</td><td>Gravel, neem on the west, bougainvillea and native shrubs; no lawn</td><td>~450 mm rain a year</td><td class="num">₹20–40k</td></tr>
+    </tbody>
+  </table></div>
+
+  <div><h2>Vastu check</h2><p class="muted" style="margin-top:6px">The v6 layout checked against common Vastu Shastra guidance: <b>17 ✓, 3 minor (~), 0 ✕</b>. Interpretations differ between consultants, so treat this as a checklist, not a verdict.</p></div>
+  <div class="tbl"><table>
+    <thead><tr><th>Element</th><th>Where in v6</th><th>Vastu says</th><th>Result</th><th>Note</th></tr></thead>
+    <tbody>
+      <tr><td>Bedroom 1 (parents)</td><td>SW</td><td>SW suits the elders / head of the family</td><td><span class="pill good">✓</span></td><td>Attached bath + walk-in dressing</td></tr>
+      <tr><td>Master (you)</td><td>First floor, SW, stacked on Bedroom 1</td><td>Master on the upper floor in the SW is ideal</td><td><span class="pill good">✓</span></td><td>Bed head to the south</td></tr>
+      <tr><td>Kitchen</td><td>NW, closed</td><td>SE best, NW second best</td><td><span class="pill good">✓</span></td><td>Cook faces east (hob on the east counter), sink in the NE part, fridge on the west</td></tr>
+      <tr><td>Living</td><td>NE</td><td>Keep the NE light and open</td><td><span class="pill good">✓</span></td><td>Arched glass on the north</td></tr>
+      <tr><td>Mandir</td><td>NE corner</td><td>Ishan corner is the best; nothing above it</td><td><span class="pill good">✓</span></td><td>Open terrace above; you face east while praying</td></tr>
+      <tr><td>Centre (brahmasthan)</td><td>Open TV lounge</td><td>Keep it open, no toilet, stair or pillar</td><td><span class="pill good">✓</span></td><td>—</td></tr>
+      <tr><td>Staircase</td><td>South, U-stair</td><td>S / SW / W; turns clockwise going up; odd number of steps</td><td><span class="pill good">✓</span></td><td>21 steps, clockwise</td></tr>
+      <tr><td>Bathrooms</td><td>West wall, stacked on both floors; WC on the south wall</td><td>W / NW are fine; never NE or centre; WC user should face N or S</td><td><span class="pill good">✓</span></td><td>You sit facing north; plumbing runs straight down</td></tr>
+      <tr><td>Main door + gate</td><td>East centre, gate in the NE half</td><td>East door in the north-east half</td><td><span class="pill good">✓</span></td><td>—</td></tr>
+      <tr><td>Height / weight</td><td>SW highest (master + tank), NE lowest (terrace)</td><td>SW high and heavy, NE low and light</td><td><span class="pill good">✓</span></td><td>—</td></tr>
+      <tr><td>Tanka / septic</td><td>Tanka NE, septic NW</td><td>Underground water N / NE / E; septic NW</td><td><span class="pill good">✓</span></td><td>—</td></tr>
+      <tr><td>Upper lounge</td><td>First floor, centre-east</td><td>Upper floors: keep the NE lowest, the SW highest</td><td><span class="pill good">✓</span></td><td>NE stays open terrace; the SW (master + tank) is still the highest point</td></tr>
+      <tr><td>Double-height living</td><td>NE, 22′ high, gallery above</td><td>NE should be light, open and airy</td><td><span class="pill good">✓</span></td><td>Upper north + east glass</td></tr>
+      <tr><td>Bedroom 1 door</td><td>Under the high end of the stair</td><td>Keep important things out from under a stair</td><td><span class="pill warn">~</span></td><td>Only a passage + a store for bedding/trunks; no mandir, toilet or cash locker under the stair</td></tr>
+      <tr><td>Open kitchen</td><td>Partly visible from the main door</td><td>Kitchen ideally not seen from the entrance</td><td><span class="pill warn">~</span></td><td>The low shoe cabinet + a plant screen break the line of sight</td></tr>
+      <tr><td>Windows</td><td>Big glass N + E; master big glass S</td><td>Fewer openings on the S / W</td><td><span class="pill warn">~</span></td><td>The 5′ overhang + balcony make the south glass acceptable</td></tr>
+      <tr><td>Bedroom 2</td><td>NW, with a walk-in wardrobe + own bath</td><td>NW suits an unmarried daughter or guests</td><td><span class="pill good">✓</span></td><td>Bed head to the west (not against the bath wall)</td></tr>
+      <tr><td>Bath 2</td><td>NW, on the west wall</td><td>W / NW are fine for toilets; WC user faces N or S</td><td><span class="pill good">✓</span></td><td>Shares the wet wall with the parents' bath</td></tr>
+      <tr><td>Store</td><td>South, under the stair</td><td>S / SW suit storage; nothing sacred or valuable under a stair</td><td><span class="pill good">✓</span></td><td>Bedding, trunks, grain</td></tr>
+      <tr><td>Bath vs kitchen</td><td>Opposite sides (W vs SE)</td><td>Toilet should not share a wall with the kitchen</td><td><span class="pill good">✓</span></td><td>Far apart</td></tr>
+    </tbody>
+  </table></div>
+
+  <div class="tbl"><table>
+    <thead><tr><th>Cost vs the plain v2 house (₹29.6L at local rates)</th><th class="num">₹ lakh</th></tr></thead>
+    <tbody>
+      <tr><td>Portal D on the living (13½′ × ~22′): glass + 3-bar steel frame, deep wood portal, sliders + top vents, north patio; + normal big glass on the dining</td><td class="num">+3.4 to +5.2</td></tr>
+      <tr><td>Big glass: master south slider, Bedroom 2 north + kitchen east (above normal windows)</td><td class="num">+1.4 to +2.0</td></tr>
+      <tr><td>Master: 5′ south roof overhang + 4′ balcony + glass rail (~22 rft)</td><td class="num">+1.2 to +2.0</td></tr>
+      <tr><td>Sandstone pier + entry canopy</td><td class="num">+0.5 to +1.0</td></tr>
+      <tr><td>Cool roof + XPS over the master</td><td class="num">+0.4 to +0.9</td></tr>
+      <tr><td>Upper lounge, ~100 sqft, with glass on the north + east</td><td class="num">+2.0 to +2.6</td></tr>
+      <tr><td>East deck (WPC) + north planter beds</td><td class="num">+0.5 to +0.9</td></tr>
+      <tr><td>Double-height living: taller walls, upper north + east glass, gallery + glass/wood railing (less slab)</td><td class="num">+1.8 to +2.8</td></tr>
+      <tr><td>Upgraded bathrooms ×2 (walk-in showers, wall-hung WCs, grab bars, fluted glass)</td><td class="num">+0.8 to +1.4</td></tr>
+      <tr><td>Water softener + pressure pump</td><td class="num">+0.3 to +0.7</td></tr>
+      <tr><td>Bath 2 for Bedroom 2 (6′ × 5′ with window)</td><td class="num">+0.8 to +1.1</td></tr>
+      <tr><td>Under-stair store + solar chimney with louvres over the stair</td><td class="num">+0.5 to +0.8</td></tr>
+      <tr class="total"><td>Net extra → <b>about ₹43–52L</b> for the house (skip the upper lounge → ₹41–49L)</td><td class="num">+13.8 to +21.7</td></tr>
+    </tbody>
+  </table></div>
+</div>
+
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from 'three/addons/renderers/CSS2DRenderer.js';
+
+/* plan feet: x = east (0 = west face), y = north. Road + front = east (x = 38). */
+const CX=21, CY=17.5, T=0.75, G0=2, G1=13, F0=13.5, F1=24.5, R1=25;
+const P=(x,h,y)=>new THREE.Vector3(x-CX,h,-(y-CY));
+const wallLog=[];
+const std=(c,r=.88,m=0,x={})=>new THREE.MeshStandardMaterial({color:c,roughness:r,metalness:m,...x});
+function stoneTex(){const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');
+  g.fillStyle='#9c7a52';g.fillRect(0,0,256,256);let y=0;
+  while(y<256){const h=10+Math.random()*12;let x=-Math.random()*40;while(x<256){const w=34+Math.random()*60,v=Math.floor(Math.random()*30);
+    g.fillStyle=`rgb(${190+v},${150+v},${105+v})`;g.fillRect(x+1.5,y+1.5,w-3,h-3);x+=w;}y+=h;}
+  const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(1,4);t.colorSpace=THREE.SRGBColorSpace;return t;}
+const M={white:std('#e9dcc3',.9),char:std('#3a2e25',.55,.2),wood:std('#9b6338',.65),
+  sand:new THREE.MeshStandardMaterial({map:stoneTex(),roughness:.95}),
+  kota:std('#7d8f8a',.55),tile:std('#cdd6d9',.5),marble:std('#ece8df',.35),granite:std('#2a2b2e',.4),stoneFloor:std('#9c9a94',.8),
+  terrace:std('#e2d6c0',.9),plinth:std('#7a6a58',.95),ground:std('#d7c09a',1),gravel:std('#c9b896',1),lawn:std('#7a9150',1),paver:std('#9b968e',.8),road:std('#3d3f42',.6),
+  bark:std('#5a4330',.95),leaf:std('#5f8a45',.9,0,{flatShading:true}),car:std('#283346',.3,.6),tyre:std('#1d1d1d',.9),tank:std('#2a2a2a',.6),
+  glass:new THREE.MeshPhysicalMaterial({color:'#9cc0d2',roughness:.05,transparent:true,opacity:.34,emissive:'#ffcf8a',emissiveIntensity:0,side:THREE.DoubleSide}),
+  rail:new THREE.MeshPhysicalMaterial({color:'#bfe0ea',roughness:.05,transparent:true,opacity:.3,side:THREE.DoubleSide}),
+  portal:std('#4b3527',.55),bathWall:std('#dccbb0',.45),bathFloor:std('#cdbb9e',.85),woodTile:std('#8a6a4a',.6),gold:std('#b8925a',.3,.8),chrome:std('#c9ccd0',.2,.9),mirror:std('#c8d2d6',.05,.95),
+  fluted:new THREE.MeshPhysicalMaterial({color:'#f4f1ea',roughness:.35,transparent:true,opacity:.55,side:THREE.DoubleSide}),
+  lamp:new THREE.MeshStandardMaterial({color:'#fff6e0',emissive:'#ffd08a',emissiveIntensity:0})};
+Object.assign(M,{walnut:std('#5b3a24',.6),sheet:std('#ece7dd',.95),pillow:std('#f7f4ee',.95),throwB:std('#2b4a8b',.9),
+  wardrobe:std('#a07f5e',.55),sofa:std('#6d7b84',.95),rug:std('#8c5a43',1),rug2:std('#b9a58a',1),ceramic:std('#f5f5f3',.25),
+  mirror:new THREE.MeshPhysicalMaterial({color:'#d6e8ee',roughness:.02,metalness:.7}),fridge:std('#c9ccd0',.3,.5),
+  plant:std('#4f7a3a',.9,0,{flatShading:true}),pot:std('#b5653b',.9),tv:std('#111214',.3,.2)});
+const FURN=[];
+function fbox(gr,fl,x0,x1,y0,y1,h0,h1,mat){box(gr,x0,x1,y0,y1,h0,h1,mat); FURN.push({fl,x0,x1,y0,y1});}
+function bed(gr,fl,x0,x1,y0,y1,base,head){
+  fbox(gr,fl,x0,x1,y0,y1,base,base+1.1,M.walnut); box(gr,x0+.15,x1-.15,y0+.15,y1-.15,base+1.1,base+1.85,M.sheet);
+  const hb={W:[x0,x0+.35,y0,y1],E:[x1-.35,x1,y0,y1],S:[x0,x1,y0,y0+.35],N:[x0,x1,y1-.35,y1]}[head];
+  box(gr,hb[0],hb[1],hb[2],hb[3],base,base+3.8,M.walnut);
+  if(head==='W'||head==='E'){const px=head==='W'?x0+.5:x1-1.7,w=(y1-y0)/2;for(let k=0;k<2;k++)box(gr,px,px+1.2,y0+.3+k*w,y0+w*(k+1)-.3,base+1.85,base+2.3,M.pillow);
+    const tx=head==='W'?x1-1.8:x0+.2;box(gr,tx,tx+1.6,y0+.1,y1-.1,base+1.85,base+1.95,M.throwB);}
+  else{const py=head==='S'?y0+.5:y1-1.7,w=(x1-x0)/2;for(let k=0;k<2;k++)box(gr,x0+.3+k*w,x0+w*(k+1)-.3,py,py+1.2,base+1.85,base+2.3,M.pillow);
+    const ty=head==='S'?y1-1.8:y0+.2;box(gr,x0+.1,x1-.1,ty,ty+1.6,base+1.85,base+1.95,M.throwB);}}
+function wardrobe(gr,fl,x0,x1,y0,y1,base){fbox(gr,fl,x0,x1,y0,y1,base,base+7.5,M.wardrobe);
+  const horiz=(x1-x0)>(y1-y0), n=Math.max(2,Math.round((horiz?x1-x0:y1-y0)/2));
+  for(let k=1;k<n;k++){const a=(horiz?x0:y0)+(horiz?x1-x0:y1-y0)*k/n; horiz?box(gr,a-.03,a+.03,y0-.02,y1+.02,base+.3,base+7.3,M.walnut):box(gr,x0-.02,x1+.02,a-.03,a+.03,base+.3,base+7.3,M.walnut);}}
+function sofa(gr,fl,x0,x1,y0,y1,base,back){fbox(gr,fl,x0,x1,y0,y1,base,base+1.4,M.sofa);
+  const b={N:[x0,x1,y1-.7,y1],S:[x0,x1,y0,y0+.7],E:[x1-.7,x1,y0,y1],W:[x0,x0+.7,y0,y1]}[back];box(gr,b[0],b[1],b[2],b[3],base+1.4,base+2.8,M.sofa);
+  if(back==='N'||back==='S'){box(gr,x0,x0+.5,y0,y1,base+1.4,base+2.1,M.sofa);box(gr,x1-.5,x1,y0,y1,base+1.4,base+2.1,M.sofa);}
+  else{box(gr,x0,x1,y0,y0+.5,base+1.4,base+2.1,M.sofa);box(gr,x0,x1,y1-.5,y1,base+1.4,base+2.1,M.sofa);}}
+function table(gr,fl,x0,x1,y0,y1,base,h=2.5,mat=M.walnut){fbox(gr,fl,x0,x1,y0,y1,base+h-.15,base+h,mat);
+  for(const [x,y] of [[x0+.2,y0+.2],[x1-.2,y0+.2],[x0+.2,y1-.2],[x1-.2,y1-.2]])box(gr,x-.08,x+.08,y-.08,y+.08,base,base+h-.15,mat);}
+function chair(gr,fl,x,y,base,back){fbox(gr,fl,x-.75,x+.75,y-.75,y+.75,base+1.4,base+1.6,M.walnut);
+  for(const [dx,dy] of [[-.6,-.6],[.6,-.6],[-.6,.6],[.6,.6]])box(gr,x+dx-.06,x+dx+.06,y+dy-.06,y+dy+.06,base,base+1.4,M.walnut);
+  const b={N:[x-.75,x+.75,y+.6,y+.75],S:[x-.75,x+.75,y-.75,y-.6],E:[x+.6,x+.75,y-.75,y+.75],W:[x-.75,x-.6,y-.75,y+.75]}[back];
+  box(gr,b[0],b[1],b[2],b[3],base+1.6,base+3.2,M.walnut);}
+function rug(gr,x0,x1,y0,y1,base,mat=M.rug){box(gr,x0,x1,y0,y1,base,base+.03,mat,false);}
+function plant(gr,x,y,base,sc=1){box(gr,x-.5*sc,x+.5*sc,y-.5*sc,y+.5*sc,base,base+1.4*sc,M.pot);
+  const pl=new THREE.Mesh(new THREE.IcosahedronGeometry(1.1*sc,1),M.plant);pl.position.copy(P(x,base+2.4*sc,y));pl.castShadow=true;gr.add(pl);}
+function wc(gr,fl,x0,x1,y0,y1,base){fbox(gr,fl,x0,x1,y0,y1,base,base+1.3,M.ceramic);}
+// Bathroom: dry zone at the front (vanity + wall-hung WC on the south wall, so you sit facing north), walk-in shower at the back
+// behind a fixed glass panel, one floor level (no curb) with a linear drain. elder=true → grab bars, fold-down seat, night light.
+function bathroom(gr,fl,base,lux,dx=0,win=null){
+  const X=v=>v+dx, x0=X(6.4),x1=X(11.6),y0=13.4,y1=19.6,cp=lux?M.gold:M.chrome, bw=lux?M.woodTile:M.bathWall;
+  box(gr,x0,x1,y0,y1,base+.1,base+.15,M.bathFloor,false);                                   // matt anti-skid tile, one level
+  for(const [a,b] of [[y0,15],[17.2,y1]]){box(gr,x0,x0+.04,a,b,base,base+7.5,M.bathWall,false); box(gr,x1-.04,x1,a,b,base,base+7.5,M.bathWall,false);}
+  box(gr,x0,x1,y0,y0+.04,base,base+7.5,M.bathWall,false);
+  if(win){const [wa,wb,ws,wh]=win; box(gr,x0,wa,y1-.05,y1,base,base+9.4,bw,false); box(gr,wb,x1,y1-.05,y1,base,base+9.4,bw,false);
+    box(gr,wa,wb,y1-.05,y1,base,base+ws,bw,false); box(gr,wa,wb,y1-.05,y1,base+wh,base+9.4,bw,false);}
+  else box(gr,x0,x1,y1-.05,y1,base,base+9.4,bw,false);                                     // shower back wall (wood-look accent upstairs)
+  // wall-hung vanity + basin, mirror (backlit upstairs), LED glow under the vanity
+  fbox(gr,fl,X(6.45),X(8.6),y0,14.9,base+1.7,base+2.6,lux?M.walnut:M.wardrobe); box(gr,X(6.6),X(8.45),13.5,14.75,base+2.6,base+2.8,M.ceramic);
+  box(gr,X(7.4),X(7.65),13.45,13.75,base+2.8,base+3.35,cp);
+  box(gr,X(6.6),X(8.45),y0+.05,y0+.1,base+3.6,base+6.2,M.mirror,false); if(lux) box(gr,X(6.5),X(8.55),y0+.02,y0+.05,base+3.5,base+6.3,M.lamp,false);
+  box(gr,X(6.5),X(8.55),14.86,14.9,base+1.62,base+1.68,M.lamp,false);
+  // concealed-cistern ledge + flush plate, wall-hung WC (on the south wall, so you sit facing north)
+  fbox(gr,fl,X(9.8),x1,y0,13.95,base,base+3.6,M.bathWall); box(gr,X(10.45),X(10.95),13.95,13.99,base+3,base+3.4,cp,false);
+  fbox(gr,fl,X(10.15),X(11.25),13.95,15.75,base+1.05,base+1.45,M.ceramic);
+  // walk-in shower: fixed glass (fluted upstairs), open entry by the door, linear drain, rain head, mixer, niche
+  box(gr,x0,X(9.4),17.27,17.33,base+.15,base+7.2,lux?M.fluted:M.rail,false); box(gr,x0,X(9.4),17.24,17.36,base+7.2,base+7.3,cp);
+  FURN.push({fl,x0,x1:X(9.4),y0:17.24,y1:17.36});
+  box(gr,X(6.6),X(11.4),19.15,19.32,base+.15,base+.18,M.char,false);
+  const sh=new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,.06,24),cp); sh.position.copy(P(X(8.4),base+7.6,18.5)); gr.add(sh);
+  box(gr,X(8.36),X(8.44),18.5,y1,base+7.6,base+7.7,cp); box(gr,X(8.2),X(8.6),19.5,y1,base+3.6,base+4.1,cp);
+  box(gr,X(9.6),X(11.2),19.52,y1,base+3.8,base+5,lux?M.lamp:M.granite,false);
+  if(!lux){                                                                                 // parents: elder-friendly
+    box(gr,x1-.15,x1-.04,14,14.9,base+2.6,base+2.74,M.chrome);                              // grab bar beside the WC (clear of the door)
+    box(gr,X(9.86),X(9.96),13.95,15.4,base+2.55,base+2.68,M.chrome);                        // fold-down bar on the open side
+    box(gr,x1-.15,x1-.04,17.45,17.58,base+2.4,base+5.6,M.chrome);                           // vertical bar at the shower entry
+    fbox(gr,fl,x0,X(7.7),17.9,19.2,base+1.5,base+1.62,M.walnut);                            // fold-down shower seat
+    box(gr,X(7.68),X(7.72),18,19.1,base+2.4,base+2.52,M.chrome);
+  }
+}
+function basin(gr,fl,x0,x1,y0,y1,base){fbox(gr,fl,x0,x1,y0,y1,base,base+2.5,M.wardrobe);box(gr,x0,x1,y0,y1,base+2.5,base+2.9,M.ceramic);}
+function dresser(gr,fl,x0,x1,y0,y1,base,mx0,mx1,my0,my1){fbox(gr,fl,x0,x1,y0,y1,base,base+2.6,M.walnut);box(gr,mx0,mx1,my0,my1,base+3,base+6.5,M.mirror);}
+function box(gr,x1,x2,y1,y2,h1,h2,mat,cast=true){const w=Math.abs(x2-x1),d=Math.abs(y2-y1),hh=Math.abs(h2-h1);if(w<.01||d<.01||hh<.01)return null;
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,hh,d),mat);m.position.copy(P((x1+x2)/2,(h1+h2)/2,(y1+y2)/2));m.castShadow=cast&&!mat.transparent;m.receiveShadow=true;gr.add(m);return m;}
+const W=(a,b,sill,head,o={})=>({a,b,sill,head,kind:'win',...o}), D=(a,b,head=8,o={})=>({a,b,sill:0,head,kind:'door',...o}), O=(a,b,head)=>({a,b,sill:0,head,kind:'open'});
+function wall(gr,fk,x1,y1,x2,y2,base,height,ops=[],o={}){
+  const t=o.t??T,horiz=Math.abs(y1-y2)<1e-6,a0=horiz?Math.min(x1,x2):Math.min(y1,y2),a1=horiz?Math.max(x1,x2):Math.max(y1,y2),c=horiz?y1:x1;
+  const ext=horiz&&o.extend!==false?t/2:0,mat=o.mat||M.white;
+  const piece=(s,e,h1,h2,m=mat)=>{if(e-s<.01)return;horiz?box(gr,s,e,c-t/2,c+t/2,h1,h2,m):box(gr,c-t/2,c+t/2,s,e,h1,h2,m);};
+  const sorted=[...ops].sort((p,q)=>p.a-q.a);let cur=a0-ext;
+  for(const op of sorted){
+    piece(cur,op.a,base,base+height); if(op.sill>0)piece(op.a,op.b,base,base+op.sill); if(op.head<height)piece(op.a,op.b,base+op.head,base+height);
+    if(op.kind==='win'){const b=base+op.sill,h=base+op.head,f=.12;
+      horiz?box(gr,op.a,op.b,c-.04,c+.04,b,h,M.glass,false):box(gr,c-.04,c+.04,op.a,op.b,b,h,M.glass,false);
+      const fr=(s,e,h1,h2)=>horiz?box(gr,s,e,c-.08,c+.08,h1,h2,M.char):box(gr,c-.08,c+.08,s,e,h1,h2,M.char);
+      fr(op.a,op.b,h-f,h);fr(op.a,op.b,b,b+f);fr(op.a,op.a+f,b,h);fr(op.b-f,op.b,b,h);
+      const n=op.mull||Math.max(1,Math.round((op.b-op.a)/4)); for(let k=1;k<n;k++){const a=op.a+(op.b-op.a)*k/n;fr(a-.06,a+.06,b,h);}
+      if(op.frame&&o.out){const d=op.frame,s0=c+o.out*t/2,s1=c+o.out*(t/2+d),lo=Math.min(s0,s1),hi=Math.max(s0,s1),th=.45;
+        const B=(a1_,a2_,h1,h2)=>horiz?box(gr,a1_,a2_,lo,hi,h1,h2,M.white):box(gr,lo,hi,a1_,a2_,h1,h2,M.white);
+        B(op.a-th,op.b+th,h,h+th);B(op.a-th,op.b+th,b-th,b);B(op.a-th,op.a,b,h);B(op.b,op.b+th,b,h);}
+    }
+    if(op.kind==='door'&&op.panel) horiz?box(gr,op.a+.05,op.b-.05,c-.1,c+.1,base,base+op.head-.05,M.wood):box(gr,c-.1,c+.1,op.a+.05,op.b-.05,base,base+op.head-.05,M.wood);
+    cur=op.b;}
+  piece(cur,a1+ext,base,base+height); if(fk) wallLog.push({fk,horiz,c,a0,a1,t,ops:sorted});
+}
+const flush=(gr,x1,y1,x2,y2,base,h=3)=>wall(gr,null,x1,y1,x2,y2,base,h,[]);
+const lamps=[];
+function downlights(gr,x0,x1,y0,y1,h,step=4){for(let x=x0+step/2;x<x1;x+=step)for(let y=y0+step/2;y<y1;y+=step){
+  const m=new THREE.Mesh(new THREE.CylinderGeometry(.22,.22,.06,12),M.lamp);m.position.copy(P(x,h-.04,y));gr.add(m);lamps.push(m);}}
+function tree(gr,x,y,s){const tr=new THREE.Mesh(new THREE.CylinderGeometry(.4*s,.65*s,7*s,8),M.bark);tr.position.copy(P(x,3.5*s,y));tr.castShadow=true;gr.add(tr);
+  for(const [dx,dy,dh,r] of [[0,0,9,5],[2.2,1,7.6,3.4],[-2,-1.5,7.8,3.2]]){const cn=new THREE.Mesh(new THREE.IcosahedronGeometry(r*s,1),M.leaf);cn.position.copy(P(x+dx*s,dh*s,y+dy*s));cn.castShadow=true;gr.add(cn);}}
+function car(gr,x0,y0){box(gr,x0,x0+13.4,y0,y0+6,.9,3.1,M.car);box(gr,x0+3.2,x0+9.6,y0+.4,y0+5.6,3.1,4.6,M.glass);box(gr,x0+3.3,x0+9.5,y0+.5,y0+5.5,4.45,4.65,M.car);
+  for(const [dx,dy] of [[2.5,0],[10.9,0],[2.5,6],[10.9,6]]){const w=new THREE.Mesh(new THREE.CylinderGeometry(1.05,1.05,.7,18),M.tyre);w.rotation.x=Math.PI/2;w.position.copy(P(x0+dx,1.05,y0+dy+(dy?-.3:.3)));gr.add(w);}}
+// faceted half-round (D) piece: 6 flat facets, bulging east from x = cx
+const FAC=6;
+function dPiece(gr,cx,cy,r,h1,h2,mat,open,t0=0){const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,h2-h1,FAC,1,open,t0,Math.PI),mat);
+  m.position.copy(P(cx,(h1+h2)/2,cy));m.castShadow=!open&&!mat.transparent;m.receiveShadow=true;gr.add(m);return m;}
+const dPt=(cx,cy,r,k,t0=0)=>{const a=t0+k*Math.PI/FAC;return [cx+r*Math.sin(a),cy-r*Math.cos(a)];};
+
+const GROUND=[
+  {n:'Bedroom 1',x0:0,y0:0,x1:15,y1:11.5,k:'room',f:'kota',dim:'15′ × 13′ · parents · attached bath'},
+  {n:'',x0:0,y0:11.5,x1:12,y1:13,k:'room',f:'kota',skip:true},
+  {n:'Dressing',x0:6,y0:13,x1:12,y1:20,k:'room',f:'kota',dim:'6′ × 7′'},
+  {n:'Bathroom',x0:0,y0:13,x1:6,y1:20,k:'wet',f:'tile',dim:'6′ × 7′'},
+  {n:'U-stair',x0:15,y0:0,x1:27,y1:11.5,k:'circ',f:'stoneFloor',dim:'21 risers'},
+  {n:'Store',x0:15,y0:0,x1:23.1,y1:5.67,k:'kitchen',f:'stoneFloor',dim:'under the stair',lift:.02},
+  {n:'Centre hall',x0:12,y0:11.5,x1:27,y1:20,k:'room',f:'kota',dim:'open · TV on the stair wall'},
+  {n:'',x0:27,y0:14,x1:30,y1:23,k:'room',f:'kota',skip:true},
+  {n:'',x0:24,y0:20,x1:27,y1:23,k:'room',f:'kota',skip:true},
+  {n:'Kitchen',x0:27,y0:0,x1:38,y1:14,k:'kitchen',f:'kota',dim:'11′ × 14′ · SE · ⅓ wall, ⅔ open'},
+  {n:'Foyer',x0:30,y0:14,x1:38,y1:23,k:'circ',f:'kota',dim:'8′ × 9′'},
+  {n:'Walk-in',x0:6,y0:20,x1:12,y1:25,k:'room',f:'kota',dim:'wardrobe'},
+  {n:'Bath 2',x0:0,y0:20,x1:6,y1:25,k:'wet',f:'tile',dim:'6′ × 5′'},
+  {n:'Bedroom 2',x0:0,y0:25,x1:12,y1:35,k:'room',f:'kota',dim:'12′ × 10′ · NW · own bath'},
+  {n:'Dining',x0:12,y0:20,x1:24,y1:35,k:'room',f:'kota',dim:'12′ × 15′ · north glass'},
+  {n:'Living',x0:24,y0:23,x1:38,y1:35,k:'room',f:'kota',dim:'14′ × 12′ · NE · double height 22′',hero:true},
+  {n:'Mandir',x0:35,y0:31,x1:38,y1:35,k:'sacred',f:'marble',dim:'NE corner',lift:.03},
+];
+const FIRST=[
+  {n:'Stair void',x0:15,y0:0,x1:27,y1:11.5,k:'circ',f:'stoneFloor',skipLbl:true,noFloor:true},
+  {n:'Master bedroom',x0:0,y0:0,x1:15,y1:13,k:'room',f:'kota',dim:'15′ × 13′ · big south glass',hero:true},
+  {n:'Dressing',x0:6,y0:13,x1:12,y1:20,k:'room',f:'kota',dim:'6′ × 7′'},
+  {n:'Bath',x0:0,y0:13,x1:6,y1:20,k:'wet',f:'tile',dim:'6′ × 7′'},
+  {n:'Lobby',x0:12,y0:13,x1:19,y1:17,k:'circ',f:'kota',dim:''},
+  {n:'',x0:15,y0:11.5,x1:19,y1:13,k:'circ',f:'kota',skipLbl:true},
+  {n:'Upper lounge',x0:19,y0:11.5,x1:31,y1:20,k:'room',f:'kota',dim:'12′ × 8′6″ · opens to the gallery',hero:true},
+  {n:'Gallery',x0:19,y0:20,x1:38,y1:24,k:'circ',f:'kota',dim:'looks down into the living'},
+];
+const TERR=[
+  {n:'East terrace',x0:27,y0:0,x1:38,y1:8,dim:'over the kitchen'},
+  {n:'North terrace',x0:0,y0:24,x1:24,y1:35,dim:'planter garden'},
+  {n:'Deck',x0:31,y0:8,x1:38,y1:20,dim:'outdoor sofa · sunrise'},
+  {n:'South balcony',x0:.6,y0:-4,x1:14.4,y1:0,dim:'4′ · glass rail'},
+];
+const dimOf=r=>r.dim??`${r.x1-r.x0}′ × ${r.y1-r.y0}′`;
+
+const stage=document.getElementById('stage');
+let renderer; try{renderer=new THREE.WebGLRenderer({antialias:true});}catch(e){stage.insertAdjacentHTML('beforeend','<p style="padding:20px">WebGL is unavailable here; the plans below still work.</p>');}
+const G={site:new THREE.Group(),ground:new THREE.Group(),groundRoof:new THREE.Group(),first:new THREE.Group(),firstRoof:new THREE.Group()};
+const L={G:[],F:[],S:[],C:[]};
+const label=(k,t,s,x,y,h,hero=false)=>{const d=document.createElement('div');d.className='lbl'+(hero?' hero':'');d.innerHTML=t+(s?`<span>${s}</span>`:'');const o=new CSS2DObject(d);o.position.copy(P(x,h,y));L[k].push(o);};
+
+// Portal D: the glass sits 2′ back inside a thick dark-wood frame. Only 3 slim bars. Sliding doors in the bottom 8′,
+// top-hung vents just under the arch to let hot air out of the 22′ living (stack effect).
+function portalD(gr,ax0,ax1,ay,base,ht){
+  const inset=.3, ar=(ax1-ax0)/2-inset, acx=(ax0+ax1)/2, spring=ht-.4-ar, fw=.85, dep=2, ro=ar+fw, a0=ax0+inset, a1=ax1-inset;
+  const archPath=(sh)=>{sh.moveTo(a0-CX,0); sh.lineTo(a1-CX,0); sh.lineTo(a1-CX,spring); sh.absarc(acx-CX,spring,ar,0,Math.PI,false); sh.lineTo(a0-CX,0); return sh;};
+  const outer=new THREE.Shape(); outer.moveTo(ax0-CX,0); outer.lineTo(ax1-CX,0); outer.lineTo(ax1-CX,ht); outer.lineTo(ax0-CX,ht); outer.lineTo(ax0-CX,0);
+  outer.holes.push(archPath(new THREE.Path()));
+  const pm=new THREE.Mesh(new THREE.ExtrudeGeometry(outer,{depth:T,bevelEnabled:false,curveSegments:40}),M.white); pm.position.set(0,base,-(ay+T/2-CY)); pm.castShadow=pm.receiveShadow=true; gr.add(pm);
+  const gm=new THREE.Mesh(new THREE.ShapeGeometry(archPath(new THREE.Shape()),40),M.glass); gm.position.set(0,base,-(ay-CY)); gr.add(gm);
+  // deep wood portal: two legs + an arched ring, projecting 2′ out to the north
+  box(gr,acx-ro,acx-ar,ay,ay+dep,base,base+spring,M.portal); box(gr,acx+ar,acx+ro,ay,ay+dep,base,base+spring,M.portal);
+  const ring=new THREE.Shape(); ring.moveTo(acx+ro-CX,spring); ring.absarc(acx-CX,spring,ro,0,Math.PI,false); ring.lineTo(acx-ar-CX,spring); ring.absarc(acx-CX,spring,ar,Math.PI,0,true); ring.lineTo(acx+ro-CX,spring);
+  const rm=new THREE.Mesh(new THREE.ExtrudeGeometry(ring,{depth:dep,bevelEnabled:false,curveSegments:48}),M.portal); rm.position.set(0,base,-(ay+dep-CY)); rm.castShadow=rm.receiveShadow=true; gr.add(rm);
+  // 3 slim bronze bars + 3 slim cross bars (slider head, vent sill, vent hinge at the spring line)
+  for(const k of [-.5,0,.5]){const u=acx+ar*k, hh=spring+ar*Math.sqrt(1-k*k); box(gr,u-.045,u+.045,ay-.06,ay+.06,base,base+hh,M.char);}
+  for(const h of [8.3,spring-1.7,spring]) box(gr,a0,a1,ay-.06,ay+.06,base+h-.05,base+h+.05,M.char);
+  box(gr,a0,a1,ay-.08,ay+.08,base,base+.12,M.char);                                            // flush threshold
+  for(const k of [-.5,.5]){const u=acx+ar*k; box(gr,u-.32,u-.26,ay+.07,ay+.12,base+3.2,base+4.6,M.char); box(gr,u+.26,u+.32,ay+.07,ay+.12,base+3.2,base+4.6,M.char);} // slider handles
+  // top-hung vents, shown tilted open
+  const bays=[a0,acx-ar*.5,acx,acx+ar*.5,a1], th=.32, vh=1.55;
+  for(let i=0;i<4;i++){const w=bays[i+1]-bays[i]-.2, v=new THREE.Mesh(new THREE.BoxGeometry(w,vh,.05),M.glass);
+    v.rotation.x=th; v.position.set((bays[i]+bays[i+1])/2-CX, base+spring-.05-(vh/2)*Math.cos(th), -(ay-CY)-(vh/2)*Math.sin(th)); gr.add(v);
+    const fr2=new THREE.Mesh(new THREE.BoxGeometry(w,.08,.08),M.char); fr2.rotation.x=th; fr2.position.set(v.position.x, base+spring-.05-vh*Math.cos(th), -(ay-CY)-vh*Math.sin(th)); gr.add(fr2);}
+}
+function archWindow(gr,ax0,ax1,ay,base,ht,ryIn){ // "sleeping D": straight bottom + sides, curved top (half-ellipse for wide spans); flat glass cut to shape
+  const inset=.3, sill=.3, ar=(ax1-ax0)/2-inset, ry=ryIn||ar, acx=(ax0+ax1)/2, spring=ht-.4-ry;
+  const archPath=(sh)=>{sh.moveTo(ax0+inset-CX,sill); sh.lineTo(ax1-inset-CX,sill); sh.lineTo(ax1-inset-CX,spring); sh.absellipse(acx-CX,spring,ar,ry,0,Math.PI,false,0); sh.lineTo(ax0+inset-CX,sill); return sh;};
+  const outer=new THREE.Shape(); outer.moveTo(ax0-CX,0); outer.lineTo(ax1-CX,0); outer.lineTo(ax1-CX,ht); outer.lineTo(ax0-CX,ht); outer.lineTo(ax0-CX,0);
+  outer.holes.push(archPath(new THREE.Path()));
+  const pm=new THREE.Mesh(new THREE.ExtrudeGeometry(outer,{depth:T,bevelEnabled:false,curveSegments:32}),M.white); pm.position.set(0,base,-(ay+T/2-CY)); pm.castShadow=pm.receiveShadow=true; gr.add(pm);
+  const gm=new THREE.Mesh(new THREE.ShapeGeometry(archPath(new THREE.Shape()),32),M.glass); gm.position.set(0,base,-(ay-CY)); gr.add(gm);
+  const NS=28; for(let i=0;i<NS;i++){const a1=Math.PI*i/NS,a2=Math.PI*(i+1)/NS,x1=acx+ar*Math.cos(a1),z1=spring+ry*Math.sin(a1),x2=acx+ar*Math.cos(a2),z2=spring+ry*Math.sin(a2);
+    const seg=new THREE.Mesh(new THREE.BoxGeometry(Math.hypot(x2-x1,z2-z1)+.02,.14,.16),M.char); seg.position.set((x1+x2)/2-CX,base+(z1+z2)/2,-(ay-CY)); seg.rotation.z=Math.atan2(z2-z1,x2-x1); gr.add(seg);}
+  box(gr,ax0+inset,ax0+inset+.14,ay-.08,ay+.08,base+sill,base+spring,M.char); box(gr,ax1-inset-.14,ax1-inset,ay-.08,ay+.08,base+sill,base+spring,M.char);
+  box(gr,ax0+inset,ax1-inset,ay-.08,ay+.08,base+sill,base+sill+.14,M.char); box(gr,ax0+inset,ax1-inset,ay-.08,ay+.08,base+spring-.07,base+spring+.07,M.char);
+  for(const u of [-.8,-.6,-.4,-.2,0,.2,.4,.6,.8].map(k=>acx+ar*k)){const hh=spring+ry*Math.sqrt(Math.max(0,1-((u-acx)/ar)**2)); box(gr,u-.06,u+.06,ay-.08,ay+.08,base+sill,base+hh,M.char);}
+}
+
+function build(scene){
+  Object.values(G).forEach(g=>scene.add(g)); const s=G.site,g=G.ground,gr=G.groundRoof,f=G.first,fr=G.firstRoof;
+  const GH=G1-G0, FH=F1-F0;
+  /* ---------- site: plot x -5..53, y -5..40; road on the east ---------- */
+  const gp=new THREE.Mesh(new THREE.PlaneGeometry(700,700),M.ground);gp.rotation.x=-Math.PI/2;gp.position.y=-.02;gp.receiveShadow=true;s.add(gp);
+  box(s,57,95,-80,120,0,.05,M.road,false); box(s,53.4,57,-80,120,0,.3,M.paver,false);
+  box(s,38.4,53,25,33,0,.06,M.paver,false); box(s,41.6,53,16,20,0,.06,M.stoneFloor,false);
+  box(s,-4.6,52.6,35.4,39.6,0,.04,M.gravel,false); box(s,38.6,52.6,-4.6,39.6,0,.04,M.gravel,false); box(s,-4.6,38.4,-4.6,-.6,0,.04,M.gravel,false);
+  for(const [x,y] of [[50,4],[49,9],[44,1],[21,38],[31,38]]){const b=new THREE.Mesh(new THREE.IcosahedronGeometry(1.2,1),M.leaf);b.position.copy(P(x,1,y));s.add(b);}
+  for(const [x1,y1,x2,y2,ops] of [[-5,-5,53,-5,[]],[-5,40,53,40,[]],[-5,-5,-5,40,[]],[53,-5,53,40,[O(16,20,4),O(25,33,4)]]]) wall(s,null,x1,y1,x2,y2,0,4,ops);
+  for(let k=0;k<8;k++) box(s,52.9,53.1,25.1,32.9,.4+k*.46,.4+k*.46+.28,M.char);
+  car(s,39.2,26); tree(s,-2.6,7,.85); tree(s,-2.6,27,.8);
+  box(s,1,7,36.2,39,0,.12,M.terrace,false); // septic tank lid, NW of the plot
+  const tk=new THREE.Mesh(new THREE.CylinderGeometry(2,2,.35,28),M.terrace);tk.position.copy(P(46,.18,36.5));s.add(tk); // rainwater tanka, NE
+  for(const [x,y] of [[44,15.6],[44,20.4],[52.6,15.6],[52.6,20.4]]){const m=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.6,10),M.lamp);m.position.copy(P(x,.3,y));s.add(m);lamps.push(m);}
+  label('S','Your master','above Bedroom 1 · big south glass',7.5,6,F1+4,true);
+  label('S','Main door','simple 4′ door',41,18,G0+11);
+  label('S','Portal D','2 floors · sliders + top vents',31,37.5,F1-1,true);
+  label('S','Solid west','slits only · neem shade',-1,14,G1+4);
+  label('C','EAST · ROAD · FRONT','you are looking at the front',55,10,8,true); label('C','NORTH →','',30,44,2);
+
+  /* ---------- ground floor ---------- */
+  box(g,-.5,38.5,-.5,35.5,0,G0-.06,M.plinth);
+  for(const r of GROUND) box(g,r.x0,r.x1,r.y0,r.y1,G0-.06+(r.lift||0),G0+(r.lift||0),M[r.f],false);
+  wall(g,'G',0,0,38,0,G0,GH,[W(3,9,3,7.5,{frame:1.6}),W(18,22,7,10,{mull:1}),W(28,31,3,7.5,{frame:1.4})],{out:-1});
+  wall(g,'G',38,0,38,35,G0,GH,[W(8.5,12.5,3.6,8.5,{mull:1}),D(16,20,8.5,{panel:true}),W(25.5,30.5,1.5,9,{mull:2})],{out:1});
+  wall(g,'G',0,35,38,35,G0,GH,[W(2.5,9.5,1.5,9,{mull:2}),W(13.5,22.5,.3,10.2,{mull:2}),O(24.2,37.8,GH)],{out:1});
+  wallLog[wallLog.length-1].ops.find(o=>o.a===24.2).kind='win'; // plan shows the arch as glazing
+  portalD(g,24.2,37.8,35,G0,F1-G0); // Portal D: two floors on the double-height living, deep wood frame, sliders below, vents on top
+  box(s,23.4,38.6,35.4,39.3,0,G0-.5,M.paver); plant(s,23.9,38.7,G0-.5,.8); plant(s,38.1,38.7,G0-.5,.8); // north patio (shaded all day)
+  wall(g,'G',0,0,0,35,G0,GH,[W(5,6.5,1,9,{mull:1}),W(15,17,6,7.5,{mull:1}),W(21.5,23.5,6,7.5,{mull:1}),W(28.5,30,3.6,9,{mull:1}),W(31.5,33,3.6,9,{mull:1})],{out:-1});
+  wall(g,'G',15,0,15,11.5,G0,GH,[D(8.6,11,8)],{t:.5}); // Bedroom 1 door: under the high end of the stair (~9′ headroom)
+  wall(g,'G',12,11.5,27,11.5,G0,GH,[O(18.75,26.6,9)],{extend:false});
+  wall(g,'G',12,11.5,12,20,G0,GH,[]);
+  wall(g,'G',0,13,12,13,G0,GH,[D(7.2,9.6)],{extend:false}); // Bedroom 1 → dressing → bath
+  wall(g,'G',6,13,6,20,G0,GH,[D(15,17.2)]);
+  wall(g,'G',0,20,12,20,G0,GH,[],{extend:false});
+  wall(g,'G',0,25,12,25,G0,GH,[O(6.6,9.4,8)],{extend:false}); // Bath 2 + walk-in wardrobe for Bedroom 2
+  wall(g,'G',6,20,6,25,G0,GH,[D(20.5,22.5)]);                  // Bath 2 door, from the walk-in
+  wall(g,'G',12,20,12,35,G0,GH,[D(25.8,28.4,8,{panel:true})]);
+  wall(g,'G',27,0,27,14,G0,GH,[]);
+  wall(g,'G',34.3,14,38,14,G0,GH,[],{extend:false}); // ⅓ wall: hides the hob + sink from the entry door; the other ⅔ stays open to the hall
+  wall(g,'G',30,23,38,23,G0,GH,[O(31,37,8.5)],{extend:false});
+  wall(g,'G',35,31,38,31,G0,GH,[],{extend:false}); // mandir side wall
+  // sandstone pier beside the door, entry canopy + steps
+  box(g,38.35,39.8,20.8,23.4,0,G1,M.sand); box(f,38.35,39.8,20.8,23.4,G1,F0+5,M.sand);
+  box(g,38.4,41.6,15.4,20.6,G0+9,G0+9.5,M.white); downlights(g,38.6,41.4,15.6,20.4,G0+9,2.4);
+  box(g,38.5,40,15.5,20.5,0,1.3,M.plinth); box(g,40,41.5,15.5,20.5,0,.65,M.plinth);
+  // U-stair (bhai-style): F1 south, F2 west, F3 north
+  const RS=(F0-G0)/21, TR=.833;
+  for(let i=0;i<7;i++) box(g,23.1,26.6,11.5-(i+1)*TR,11.5-i*TR,G0,G0+(i+1)*RS,M.stoneFloor);
+  box(g,23.1,26.6,2.17,5.67,G0+8*RS-.5,G0+8*RS,M.stoneFloor);
+  const w2=(23.1-18.75)/5; for(let i=0;i<5;i++){const top=G0+(9+i)*RS; box(g,23.1-(i+1)*w2,23.1-i*w2,2.17,5.67,top-.8,top,M.stoneFloor);}
+  box(g,15.25,18.75,2.17,5.67,G0+14*RS-.5,G0+14*RS,M.stoneFloor);
+  for(let i=0;i<7;i++){const top=G0+(15+i)*RS; box(g,15.25,18.75,5.67+i*TR,5.67+(i+1)*TR,top-.8,top,M.stoneFloor);}
+  // store under flight 2 + landing 2: louvred door off the passage to Bedroom 1, walls follow the stair soffit
+  wall(g,'G',15.25,5.67,18.75,5.67,G0,7.1,[D(15.6,18,6.6)],{t:.35,extend:false});
+  wall(g,'G',18.75,5.67,23.1,5.67,G0,4.1,[],{t:.35,extend:false}); for(let i=0;i<5;i++) box(g,23.1-(i+1)*w2,23.1-i*w2,5.5,5.84,G0+4.1,G0+(9+i)*RS-.8,M.white);
+  wall(g,'G',23.1,.4,23.1,5.67,G0,4,[],{t:.3}); box(g,22.95,23.25,.4,2.17,G0+4,G0+6.9,M.white); box(g,15.25,23.25,.4,2.17,G0+6.9,G0+7.1,M.white);
+  for(let h=G0+.6;h<G0+6.4;h+=.5) box(g,15.6,18,5.45,5.5,h,h+.12,M.walnut); // louvres on the store door
+  /* ---- furniture: ground ---- */
+  // Bedroom 1 (parents, SW) + walk-in dressing + attached bath
+  bed(g,'G',.4,6.9,4,9,G0,'W'); fbox(g,'G',.4,1.9,2.4,3.8,G0,G0+2,M.walnut); fbox(g,'G',.4,1.9,9.2,10.6,G0,G0+2,M.walnut);
+  wardrobe(g,'G',5.2,11.6,11,12.6,G0); dresser(g,'G',13.4,14.6,1,4,G0,14.5,14.6,1.3,3.7); rug(g,7.2,12,4,9,G0);
+  sofa(g,'G',12.2,14.6,4.6,7,G0,'E');
+  wardrobe(g,'G',10,11.6,13.6,19.6,G0); wardrobe(g,'G',6.4,9.8,18,19.6,G0); fbox(g,'G',7.4,8.8,15.4,16.6,G0,G0+1.4,M.sofa);
+  bathroom(g,'G',G0,false,-6);   // parents: elder-friendly, on the west wall with a window
+  // TV lounge (open centre)
+  fbox(g,'G',15.3,18.6,11.9,12.9,G0,G0+1.8,M.walnut); box(g,15.6,18.3,12.3,12.45,G0+2.6,G0+5,M.tv);
+  plant(g,25.6,18.8,G0); plant(g,13.2,19,G0,.8);
+  // Bedroom 2 (NW): bed head south, walk-in wardrobe strip, dressing table, study desk at the north glass
+  bed(g,'G',.4,6.9,27.5,32.5,G0,'W'); fbox(g,'G',.4,1.9,26,27.3,G0,G0+2,M.walnut); fbox(g,'G',.4,1.9,32.7,34,G0,G0+2,M.walnut);
+  wardrobe(g,'G',10,11.6,20.4,24.6,G0); dresser(g,'G',10.4,11.6,29,32.4,G0,11.5,11.6,29.3,32.1);
+  table(g,'G',7,10.2,33.2,34.6,G0,2.5); chair(g,'G',8.6,32.3,G0,'S'); rug(g,7.2,10,26.8,32,G0,M.rug2);
+  // Bath 2: compact 6′ × 5′; shower bay on the west under the window, WC + vanity on the north wall (sit facing south)
+  box(g,.4,5.6,20.4,24.6,G0+.1,G0+.15,M.bathFloor,false);
+  box(g,.4,.44,20.4,24.6,G0,G0+5.8,M.bathWall,false); box(g,.4,5.6,24.56,24.6,G0,G0+7.5,M.bathWall,false); box(g,.4,5.6,20.4,20.44,G0,G0+7.5,M.bathWall,false);
+  fbox(g,'G',2.85,4.25,24.05,24.6,G0,G0+3.4,M.bathWall); fbox(g,'G',3,4.1,22.6,24.05,G0+1.05,G0+1.45,M.ceramic);
+  fbox(g,'G',4.4,5.55,23.6,24.6,G0+1.8,G0+2.6,M.wardrobe); box(g,4.5,5.45,23.7,24.5,G0+2.6,G0+2.8,M.ceramic); box(g,4.45,5.5,24.5,24.56,G0+3.6,G0+6,M.mirror,false);
+  box(g,2.8,2.86,22.4,24.6,G0+.15,G0+7.2,M.rail,false); FURN.push({fl:'G',x0:2.78,x1:2.88,y0:22.4,y1:24.6});
+  box(g,.6,2.6,20.6,20.75,G0+.15,G0+.18,M.char,false);
+  {const sh2=new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,.06,20),M.chrome); sh2.position.copy(P(1.6,G0+7.5,22.4)); g.add(sh2);} box(g,.44,1.6,22.36,22.44,G0+7.5,G0+7.6,M.chrome);
+  // Dining (north glass)
+  fbox(g,'G',12.4,13.6,25,30,G0,G0+3.2,M.walnut);
+  table(g,'G',15,21,26,29.5,G0,2.5); for(const x of [16,18,20]){chair(g,'G',x,25.2,G0,'S'); chair(g,'G',x,30.3,G0,'N');}
+  plant(g,22.8,33.8,G0,.8);
+  // Living (NE): sofa facing the arched glass, armchair, mandir in the NE corner
+  sofa(g,'G',26,34,25,28,G0,'S'); table(g,'G',28,32,29,30.5,G0,1.4); rug(g,26,34,28.4,33.4,G0); // one 8′ sofa facing the D-glass
+  box(g,36.6,37.6,31.5,34.5,G0,G0+3,M.marble);
+  // Foyer
+  fbox(g,'G',34.6,37.6,14.4,15.6,G0,G0+3,M.walnut); // shoe cabinet against the kitchen wall plant(g,37,22.2,G0,.8);
+  // Kitchen (SE, closed): L-counter south + east, hob on the east counter (cook faces east), sink at its NE end, fridge + pantry on the west
+  fbox(g,'G',27.4,37.6,.4,2.4,G0,G0+2.8,M.granite); fbox(g,'G',35.6,37.6,2.4,10.6,G0,G0+2.8,M.granite);
+  box(g,35.8,37.4,3.4,5.8,G0+2.8,G0+2.9,M.tv); box(g,35.6,37.6,3.2,6,G0+6,G0+7.5,M.fridge);  // hob + chimney
+  box(g,35.8,37.4,8.4,10,G0+2.8,G0+2.86,M.fridge);                                           // sink, NE end
+  fbox(g,'G',27.4,29.8,2.6,5,G0,G0+6,M.fridge); fbox(g,'G',27.4,29.4,5.4,10.6,G0,G0+7,M.wardrobe); // fridge + pantry
+  for(const r of GROUND) if(!r.skip) label('G',r.n,dimOf(r),(r.x0+r.x1)/2,(r.y0+r.y1)/2,G0+1.5,r.hero);
+  label('G','TV wall','55″ on the stair wall',17,13,G0+6); label('G','Bedroom 1 door','under the stair',16.9,9.8,G0+1.5); label('G','Entry','simple 4′ door',39.6,18,G0+1.5);
+
+  /* ---------- first-floor slabs (void over the U-stair only) ---------- */
+  box(gr,-.4,24,11.5,35.4,G1,F0,M.white); box(gr,24,38.4,11.5,24,G1,F0,M.white); box(gr,-.4,15,-.4,11.5,G1,F0,M.white);
+  box(gr,37.6,38.4,24,35.4,G1,F0,M.white); box(gr,23.6,24.4,24,35.4,G1,F0,M.white); // beams round the double-height void box(gr,26.6,38.4,-.4,11.5,G1,F0,M.white);
+  box(gr,15,26.6,-.375,.375,G1,F0,M.white);
+  for(const [a,b,c,d] of [[12,24,17,35.4],[19,38.4,11.5,24],[26.6,38.4,-.4,11.5],[-.4,12,20,35.4]]) box(gr,a,b,c,d,F0,F0+.04,M.terrace,false);
+  flush(gr,0,35,24,35,F0); flush(gr,38,0,38,20,F0); flush(gr,27,0,38,0,F0); flush(gr,0,20,0,35,F0);
+  // 4′ south balcony off the master (glass rail), lit underneath
+  box(gr,.4,14.6,-4,0,F0-.6,F0,M.white); box(gr,.4,14.6,-4,0,F0,F0+.04,M.terrace,false); downlights(gr,.8,14.2,-3.6,-.4,F0-.6,3.4);
+  box(gr,.6,14.4,-3.95,-3.85,F0,F0+3.5,M.rail,false); box(gr,.55,.65,-3.9,0,F0,F0+3.5,M.rail,false); box(gr,14.35,14.45,-3.9,0,F0,F0+3.5,M.rail,false);
+  box(gr,.6,14.4,-3.98,-3.82,F0+3.5,F0+3.62,M.char);
+
+  /* ---------- first floor: master stacked on Bedroom 1 ("copy paste") ---------- */
+  for(const r of FIRST) if(!r.noFloor) box(f,r.x0,r.x1,r.y0,r.y1,F0+.04,F0+.1,M[r.f],false);
+  wall(f,'F',0,0,27,0,F0,FH,[W(5.5,14.4,0,9.6,{mull:3}),W(18,23,3.5,7,{mull:1})],{out:-1});
+  wall(f,'F',0,0,0,20,F0,FH,[W(9,10.5,1,9,{mull:1}),W(15,17,5.5,7,{mull:1})],{out:-1});
+  wall(f,'F',0,20,12,20,F0,FH,[W(2,4.5,5.5,7.2,{mull:1})],{out:1}); // high window over the master shower
+  wall(f,'F',12,13,12,20,F0,FH,[],{out:1});
+  wall(f,'F',0,13,15,13,F0,FH,[D(7.2,9.6),D(12.3,14.8,8,{panel:true})],{extend:false});
+  wall(f,'F',6,13,6,20,F0,FH,[D(15,17.2)],{t:.4});
+  wall(f,'F',15,0,15,13,F0,FH,[W(3,9,3.5,8,{mull:2})],{t:.5}); // inner glass: borrows east light from the stair hall
+  wall(f,'F',12,17,19,17,F0,FH,[D(15.5,18,7.5,{panel:true})],{out:1,extend:false});
+  wall(f,'F',19,11.5,19,17,F0,FH,[O(12,16.6,8)]);                                   // lobby opens into the upper lounge
+  wall(f,'F',19,11.5,31,11.5,F0,FH,[W(19.6,26.4,3,8,{mull:2})],{extend:false});     // inner glass looking down the stair
+  wall(f,'F',19,20,31,20,F0,FH,[O(19.6,30.4,9)],{extend:false});                     // upper lounge opens onto the gallery
+  wall(f,'F',31,20,38,20,F0,FH,[W(32,37,0,8.5,{mull:2})],{out:-1,extend:false});     // gallery glass door to the deck
+  wall(f,'F',19,20,19,24,F0,FH,[]); wall(f,'F',19,24,24,24,F0,FH,[D(20.5,23,7.5,{panel:true})],{out:1,extend:false}); // door to the north terrace
+  wall(f,'F',24,24,24,35,F0,FH,[]);                                                  // west side of the double-height void
+  wall(f,'F',38,20,38,35,F0,FH,[W(26,32,1,9,{mull:2})],{out:1});                     // upper east glass: morning light into the living
+  // gallery railing over the living: frameless glass, wooden handrail with an LED strip, slim steel base + posts
+  box(f,24.2,37.8,23.95,24.05,F0,F0+3.4,M.rail,false); box(f,24.2,37.8,23.78,24.22,F0+3.4,F0+3.62,M.wood); box(f,24.2,37.8,23.88,24.12,F0+3.34,F0+3.4,M.lamp,false);
+  box(f,24.2,37.8,23.85,24.15,F0,F0+.25,M.char); for(let x=24.4;x<=37.7;x+=3.3) box(f,x-.06,x+.06,23.9,24.1,F0,F0+3.4,M.char);
+  label('F','Open to living below','22′ double height',31,29.5,F0+1.6);
+  wall(f,'F',31,11.5,31,20,F0,FH,[W(13,18.5,0,8.5,{mull:2})],{out:1});              // glass door to the east deck
+  box(f,.2,5.3,-.56,-.38,F0,F1,M.wood);                                             // wood-cladding accent on the master's south face
+  wall(f,'F',27,0,27,11.5,F0,FH,[W(4,8,4,7,{mull:1})],{out:1});
+  /* ---- furniture: first floor ---- */
+  bed(f,'F',.4,5.4,.4,6.9,F0,'S'); fbox(f,'F',5.6,6.8,.4,1.8,F0,F0+2,M.walnut);   // head to the south (Vastu)
+  sofa(f,'F',9,11.4,1,3.4,F0,'N'); rug(f,1,8,7.4,11.6,F0);
+  table(f,'F',12.4,14.6,3.6,10.4,F0,2.5); chair(f,'F',11.6,7,F0,'W');           // work desk under the inner glass
+  box(f,14.3,14.4,5.2,6.7,F0+2.6,F0+3.9,M.tv); box(f,14.3,14.4,7.2,8.7,F0+2.6,F0+3.9,M.tv);
+  wardrobe(f,'F',10,11.6,13.6,19.6,F0); wardrobe(f,'F',6.4,9.8,18,19.6,F0);
+  bathroom(f,'F',F0,true,-6,[2,4.5,5.5,7.2]);    // master: fluted glass, wood-look wall, LED niche, backlit mirror, brushed gold, high window
+  // upper lounge: reading chairs at the north glass, games table, bookshelf, rug
+  sofa(f,'F',20.5,23,16.6,19.1,F0,'S'); sofa(f,'F',27,29.5,16.6,19.1,F0,'S'); table(f,'F',24,26,17.2,18.6,F0,1.8);
+  table(f,'F',23.5,26.5,13,15,F0,2.5); for(const [x,y,b] of [[22.6,14,'W'],[27.4,14,'E']]) chair(f,'F',x,y,F0,b);
+  fbox(f,'F',27.4,30.6,11.9,12.7,F0,F0+6.5,M.wardrobe); rug(f,20,30,12.6,19.4,F0,M.rug2); plant(f,30.3,19.3,F0,.8);
+  // east deck + pergola sit-out
+  box(gr,31,37.6,8,17.4,F0+.04,F0+.14,M.wood,false);
+  sofa(gr,'T',32,37,9,11.4,F0+.14,'S'); table(gr,'T',33.5,35.5,12.4,13.9,F0+.14,1.4); chair(gr,'T',32.6,15.6,F0+.14,'N'); chair(gr,'T',36.2,15.6,F0+.14,'N');
+  // north terrace planter garden
+  for(const [a,b] of [[2,9],[12,19]]){box(gr,a,b,32.2,34.4,F0,F0+1.6,M.pot); for(let x=a+1;x<b;x+=2.4) plant(gr,x,33.3,F0+1.6,.6);}
+  plant(gr,22.6,33.6,F0,.9); plant(gr,36.5,2,F0,.9);
+  chair(gr,'T',4,-2,F0,'N'); chair(gr,'T',6.4,-2,F0,'N');
+  for(const r of FIRST) if(!r.skipLbl&&r.dim!=='') label('F',r.n,dimOf(r),(r.x0+r.x1)/2,(r.y0+r.y1)/2,F0+1.6,r.hero);
+  for(const r of TERR) label('F',r.n,r.dim,(r.x0+r.x1)/2,(r.y0+r.y1)/2,F0+1.6);
+  label('F','Work desk','under the inner glass',13.5,7,F0+5); label('F','Lobby','',15.5,15,F0+1.6);
+
+  /* ---------- roofs ---------- */
+  box(fr,-.4,15.4,-5,20.4,F1,R1+.5,M.white); box(fr,-.4,15.4,-5,-.4,F1-.08,F1,M.wood,false); downlights(fr,.4,14.6,-4.6,-.6,F1-.08,3.6); // 5′ south overhang
+  box(fr,15.4,27.4,-.4,11.9,F1,R1,M.white); box(fr,11.6,19.4,11.9,17.4,F1,R1,M.white); box(fr,18.6,31.6,11.1,20.6,F1,R1,M.white); box(fr,18.6,31.6,11.1,20.6,R1,R1+.04,M.terrace,false);
+  box(fr,18.6,38.4,19.6,35.4,F1,R1,M.white); box(fr,18.6,38.4,19.6,35.4,R1,R1+.04,M.terrace,false); // roof over the gallery + double-height living
+  box(fr,-.4,15.4,-5,20.4,R1+.5,R1+.54,M.terrace,false); box(fr,15.4,27.4,-.4,11.9,R1,R1+.04,M.terrace,false);
+  // solar chimney over the stair: hall, stair and upper lounge breathe out through these louvres (stack effect)
+  box(fr,17,25,2,9.5,R1+3.2,R1+3.6,M.white); for(const [x,y] of [[17,2],[25,2],[17,9.5],[25,9.5]]) box(fr,x-.15,x+.15,y-.15,y+.15,R1,R1+3.2,M.char);
+  for(let h=R1+.35;h<R1+3.1;h+=.45){box(fr,17,25,1.95,2.05,h,h+.2,M.char); box(fr,17,25,9.45,9.55,h,h+.2,M.char); box(fr,16.95,17.05,2,9.5,h,h+.2,M.char); box(fr,24.95,25.05,2,9.5,h,h+.2,M.char);}
+  label('S','Solar chimney','hot air out',21,5.75,R1+4.6);
+  box(fr,1,4.4,1,4.4,R1+.5,R1+3.5,M.char); const tk2=new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,3.6,24),M.tank);tk2.position.copy(P(2.7,R1+5.3,2.7));tk2.castShadow=true;fr.add(tk2); // SW tank = highest point
+  Object.values(L).flat().forEach(o=>scene.add(o));
+}
+
+
+const state={view:'outside',labels:false};
+if(renderer){
+  const scene=new THREE.Scene(); const sky=()=>new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--sky').trim()||'#d6e2ec');
+  const dusk=new THREE.Color('#25385c'); let base=sky(); scene.background=base.clone(); scene.fog=new THREE.Fog(scene.background,280,600);
+  const camera=new THREE.PerspectiveCamera(34,1,1,1200);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2)); renderer.shadowMap.enabled=true; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  stage.prepend(renderer.domElement);
+  const lr=new CSS2DRenderer(); Object.assign(lr.domElement.style,{position:'absolute',inset:'0',pointerEvents:'none'}); stage.appendChild(lr.domElement);
+  const hemi=new THREE.HemisphereLight('#e3ecf6','#a78d66',1.2); scene.add(hemi);
+  const sun=new THREE.DirectionalLight('#fff1da',2.7); sun.castShadow=true; sun.shadow.mapSize.set(2048,2048);
+  Object.assign(sun.shadow.camera,{left:-75,right:75,top:75,bottom:-75,near:1,far:450}); sun.shadow.bias=-.0004; sun.shadow.normalBias=.03;
+  sun.target.position.copy(P(22,0,17)); scene.add(sun,sun.target);
+  const glow=[]; for(const [x,h,y] of [[12,8,27],[33,8,14],[32,19,13],[20,8,15],[31,8,29]]){const pl=new THREE.PointLight('#ffc77d',0,40,1.6);pl.position.copy(P(x,h,y));scene.add(pl);glow.push(pl);}
+  build(scene);
+  const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.maxPolarAngle=Math.PI*.495; controls.minDistance=20; controls.maxDistance=260; controls.autoRotateSpeed=.6;
+  const CAM={outside:[[98,20,4],[24,11,18]],north:[[29,22,104],[29,12,30]],ground:[[66,64,-20],[20,4,17]],first:[[-26,60,-36],[12,10,10]]};
+  const setCam=v=>{camera.position.copy(P(CAM[v][0][0],CAM[v][0][1],CAM[v][0][2])); controls.target.copy(P(CAM[v][1][0],CAM[v][1][1],CAM[v][1][2])); controls.update();};
+  const apply=()=>{const v=state.view; G.groundRoof.visible=v!=='ground'; G.first.visible=v!=='ground'; G.firstRoof.visible=v==='outside'||v==='north';
+    L.G.forEach(o=>o.visible=state.labels&&v==='ground'); L.F.forEach(o=>o.visible=state.labels&&v==='first'); L.S.forEach(o=>o.visible=state.labels&&(v==='outside'||v==='north')); L.C.forEach(o=>o.visible=true);
+    document.querySelectorAll('[data-view]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.view===v)));};
+  document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view; if((state.view==='ground'||state.view==='first')&&!state.labels){state.labels=true;document.getElementById('t-labels').checked=true;} apply();setCam(state.view);}));
+  document.getElementById('t-labels').addEventListener('change',e=>{state.labels=e.target.checked;apply();});
+  document.getElementById('t-rotate').addEventListener('change',e=>{controls.autoRotate=e.target.checked;});
+  const D2R=Math.PI/180, PTS=['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'];
+  const updateSun=()=>{
+    const decl=+document.getElementById('s-season').value, hr=+document.getElementById('s-hour').value;
+    const phi=28.35*D2R, dl=decl*D2R, H=(hr-12)*15*D2R, sa=Math.sin(phi)*Math.sin(dl)+Math.cos(phi)*Math.cos(dl)*Math.cos(H), alt=Math.asin(sa);
+    let az=Math.atan2(-Math.cos(dl)*Math.sin(H),Math.sin(dl)*Math.cos(phi)-Math.cos(dl)*Math.sin(phi)*Math.cos(H)); if(az<0) az+=2*Math.PI;
+    const e=Math.sin(az)*Math.cos(alt), n=Math.cos(az)*Math.cos(alt), u=Math.sin(alt);
+    sun.position.set(sun.target.position.x+200*e,200*Math.max(u,.02),sun.target.position.z-200*n);
+    const altD=alt/D2R, night=altD<=0?1:Math.max(0,1-altD/10);
+    sun.intensity=alt>0?2.7*Math.min(1,sa*3.2):0; hemi.intensity=1.2-.85*night;
+    M.lamp.emissiveIntensity=night*3; M.glass.emissiveIntensity=night*.55; glow.forEach(p=>p.intensity=night*55);
+    scene.background.copy(base).lerp(dusk,night*.9); scene.fog.color.copy(scene.background);
+    const hh=Math.floor(hr), mm=Math.round((hr-hh)*60), t=`${String(hh).padStart(2,'0')}:${String(mm).padStart(2,'0')}`, out=document.getElementById('sun-out');
+    if(alt<=0){out.innerHTML=`<b>${t}</b> · after sunset<br>Evening lights: soffit, arched living glass, warm glass.`;return;}
+    let note='';
+    if(e>.25&&altD<35) note='Morning sun lights the east side: the kitchen, the living and the stair hall. Your room borrows it through the inner glass.';
+    else if(e>.25) note='Mid-morning: east windows in sun; the north glass stays soft and glare-free.';
+    else if(e<-.25) note='Hot afternoon sun is on the solid west wall with slits only. The neem and the dressing/bath block take it.';
+    else note=decl<0?'Winter noon: low sun comes deep through your big south glass and warms the room.':'Summer noon: the 5′ overhang keeps the high sun off your big south glass.';
+    out.innerHTML=`<b>${t}</b> · sun <b>${Math.round(altD)}°</b> from <b>${PTS[Math.round(az/(Math.PI/8))%16]}</b><br>${note}`;
+  };
+  document.getElementById('s-season').addEventListener('change',updateSun); document.getElementById('s-hour').addEventListener('input',updateSun);
+  const reSky=()=>{base=sky();updateSun();}; matchMedia('(prefers-color-scheme: dark)').addEventListener('change',reSky);
+  new MutationObserver(reSky).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+  const resize=()=>{const w=stage.clientWidth,h=stage.clientHeight;if(!w||!h)return;renderer.setSize(w,h);lr.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix();};
+  new ResizeObserver(resize).observe(stage); resize(); setCam('outside'); apply(); updateSun();
+  (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);lr.render(scene,camera);})();
+}else build(new THREE.Scene());
+
+/* plans */
+const NS='http://www.w3.org/2000/svg',YT=40,sy=y=>YT-y;
+const el=(t,a,p,x)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);if(x!=null)e.textContent=x;p&&p.appendChild(e);return e;};
+function walls(svg,fk){for(const w of wallLog.filter(w=>w.fk===fk)){let cur=w.a0-(w.horiz?w.t/2:0);
+  const seg=(s,e)=>{if(e-s<.01)return;w.horiz?el('rect',{x:s,y:sy(w.c+w.t/2),width:e-s,height:w.t,class:'wall'},svg):el('rect',{x:w.c-w.t/2,y:sy(e),width:w.t,height:e-s,class:'wall'},svg);};
+  for(const op of w.ops){seg(cur,op.a);
+    if(op.kind==='win') w.horiz?el('rect',{x:op.a,y:sy(w.c+w.t/2),width:op.b-op.a,height:w.t,class:'win'},svg):el('rect',{x:w.c-w.t/2,y:sy(op.b),width:w.t,height:op.b-op.a,class:'win'},svg);
+    if(op.kind==='door'){const r=op.b-op.a;let H,Lp,E;if(w.horiz){H=[op.a,w.c];Lp=[op.a,w.c-r];E=[op.b,w.c];}else{H=[w.c,op.a];Lp=[w.c+r,op.a];E=[w.c,op.b];}
+      const h=[H[0],sy(H[1])],l=[Lp[0],sy(Lp[1])],e=[E[0],sy(E[1])],cr=(l[0]-h[0])*(e[1]-h[1])-(l[1]-h[1])*(e[0]-h[0]);
+      el('path',{d:`M${h[0]},${h[1]} L${l[0]},${l[1]} A${r},${r} 0 0 ${cr>0?1:0} ${e[0]},${e[1]}`,class:'door'},svg);}
+    cur=op.b;}
+  seg(cur,w.a1+(w.horiz?w.t/2:0));}}
+function txt(svg,r,cls){const w=r.x1-r.x0,cx=(r.x0+r.x1)/2,cy=(r.y0+r.y1)/2,sm=w<8;
+  el('text',{x:cx,y:sy(cy)-.15,'text-anchor':'middle',class:cls||(sm?'t-small':'t-name')},svg,r.n);
+  const d=dimOf(r); if(d) el('text',{x:cx,y:sy(cy)+1.05,'text-anchor':'middle',class:'t-dim'},svg,d);}
+function furnPlan(svg,fls){for(const it of FURN) if(fls.includes(it.fl)) el('rect',{x:it.x0,y:sy(it.y1),width:it.x1-it.x0,height:it.y1-it.y0,style:'fill:none;stroke:var(--muted);stroke-width:.08'},svg);}
+function north(svg){const g=el('g',{transform:`translate(-2,${sy(36)})`},svg);el('path',{d:'M0,-2.2 L1,1 L0,.4 L-1,1 Z',class:'arrow'},g);el('text',{x:0,y:-2.7,'text-anchor':'middle',class:'t-name'},g,'N');}
+function stairs(svg){for(let i=0;i<=7;i++)el('path',{d:`M23.1,${sy(11.5-i*.833)} L26.6,${sy(11.5-i*.833)}`,class:'thin'},svg);
+  for(let i=0;i<=5;i++)el('path',{d:`M${23.1-i*.87},${sy(2.17)} L${23.1-i*.87},${sy(5.67)}`,class:'thin'},svg);
+  for(let i=0;i<=7;i++)el('path',{d:`M15.25,${sy(5.67+i*.833)} L18.75,${sy(5.67+i*.833)}`,class:'thin'},svg);}
+const eastTag=svg=>el('text',{x:54.5,y:sy(17.5),'text-anchor':'middle',class:'t-acc',transform:`rotate(90 54.5 ${sy(17.5)})`},svg,'EAST · ROAD · FRONT');
+{ const h=document.getElementById('plan-g'); const svg=el('svg',{viewBox:'-5 -4 60 52',role:'img','aria-label':'Ground floor plan'},h);
+  for(const r of GROUND) el('rect',{x:r.x0,y:sy(r.y1),width:r.x1-r.x0,height:r.y1-r.y0,class:'r-'+r.k},svg);
+  stairs(svg); walls(svg,'G'); furnPlan(svg,['G']);
+  for(const r of GROUND) if(!r.skip) txt(svg,r,r.hero?'t-acc2':null);
+  el('text',{x:24.85,y:sy(10.4),'text-anchor':'middle',class:'t-acc'},svg,'UP ↓');
+  el('rect',{x:38.4,y:sy(20.6),width:3.2,height:5.2,class:'dash'},svg);
+  el('path',{d:`M52,${sy(18)} L42.2,${sy(18)}`,class:'thin'},svg); el('path',{d:`M41.8,${sy(18)} l1,-.6 l0,1.2 z`,class:'arrow'},svg);
+  el('text',{x:47.5,y:sy(16.7),'text-anchor':'middle',class:'t-name'},svg,'ENTRY');
+  el('text',{x:31,y:sy(36.6),'text-anchor':'middle',class:'t-acc2'},svg,'Portal D (2 floors) · sliders + vents');
+  el('text',{x:-3,y:sy(14),'text-anchor':'middle',class:'t-acc',transform:`rotate(-90 -3 ${sy(14)})`},svg,'solid west · slits');
+  eastTag(svg); north(svg); }
+{ const h=document.getElementById('plan-f'); const svg=el('svg',{viewBox:'-5 -4 60 52',role:'img','aria-label':'First floor plan'},h);
+  el('rect',{x:0,y:sy(35),width:38,height:35,class:'r-out'},svg);
+  for(const r of TERR) el('rect',{x:r.x0,y:sy(r.y1),width:r.x1-r.x0,height:r.y1-r.y0,class:'r-out'},svg);
+  for(const r of FIRST) el('rect',{x:r.x0,y:sy(r.y1),width:r.x1-r.x0,height:r.y1-r.y0,class:'r-'+r.k},svg);
+  el('rect',{x:24,y:sy(35),width:14,height:11,class:'r-void'},svg); el('path',{d:`M24,${sy(35)} L38,${sy(24)} M38,${sy(35)} L24,${sy(24)}`,class:'dash'},svg);
+  el('path',{d:`M24.2,${sy(24)} L37.8,${sy(24)}`,class:'win',style:'stroke-width:.35'},svg); el('text',{x:31,y:sy(30.2),'text-anchor':'middle',class:'t-name'},svg,'Open to living below');
+  stairs(svg); walls(svg,'F'); furnPlan(svg,['F','T']);
+  for(const r of FIRST) if(!r.skipLbl) txt(svg,r,r.hero?'t-acc2':null);
+  for(const r of TERR) txt(svg,{...r},'t-small');
+  el('rect',{x:-.4,y:sy(-.4),width:15.8,height:4.6,class:'dash'},svg); el('text',{x:22,y:sy(-3.2),'text-anchor':'middle',class:'t-dim'},svg,'5′ roof overhang over the balcony');
+  el('path',{d:`M7.5,${sy(-7.6)} L7.5,${sy(-5.4)}`,class:'sun'},svg); el('path',{d:`M7.5,${sy(-5)} l-.6,-1 l1.2,0 z`,class:'acc'},svg);
+  el('text',{x:12.5,y:sy(-7.2),'text-anchor':'middle',class:'t-acc'},svg,'winter sun in · summer sun shaded');
+  eastTag(svg); north(svg); }
+
+</script>
+
+</html>
