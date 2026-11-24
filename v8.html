@@ -75,7 +75,7 @@ th{font:500 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;colo
       <span>Ground ≈ <b>1,320 sqft</b></span>
     </div>
   </div>
-  <p class="muted">Bhai's plan with the front half flipped, so the road, gate, sit-out and main door are on the east. The back half stays as drawn: kitchen SE, parents' bedroom SW, stair S, master upstairs over SW. The sleeping-D from Ghar v7 is now the front of the hall with the teak main door in its centre, and the hall's other window follows the D's lines. Plot assumed the same size as bhai's (57′ × 43′).</p>
+  <p class="muted">Bhai's plan with the front half flipped, so the road, gate, sit-out and main door are on the east. The back half stays as drawn: kitchen SE, parents' bedroom SW, stair S, master upstairs over SW. The sleeping-D from Ghar v7 runs across the hall's north wall (cool north light, no sun heat), and the main door is a plain solid teak door on the front, under the sit-out. Plot assumed the same size as bhai's (57′ × 43′).</p>
 
   <div class="top">
     <div class="stage" id="stage"><div class="hint">drag · zoom · right-drag to pan</div></div>
@@ -95,7 +95,7 @@ th{font:500 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;colo
       <div style="display:grid;gap:6px;font-size:.88rem">
         <span class="lab">Route through the house</span>
         <span>1 · Gate on the east → 3 steps → sit-out (14′9″ × 5′)</span>
-        <span>2 · Teak main door inside the D glass → hall</span>
+        <span>2 · Solid teak main door → hall, D glass on its north wall</span>
         <span>3 · NW: bedroom 1, 14′5″ × 14′</span>
         <span>4 · East: store 8′6″ × 5′6″ + temple niche</span>
         <span>5 · SE: kitchen 13′ × 9′9″</span>
@@ -115,7 +115,7 @@ th{font:500 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;colo
     <thead><tr><th>Room</th><th>Size on sheet</th><th>Corner</th><th>Windows</th><th>Door (my reading)</th></tr></thead>
     <tbody>
       <tr><td>Sit-out</td><td>14′9″ × 5′0″</td><td>NE (front)</td><td>Open to the east and north, corner column</td><td>3 steps up from the drive</td></tr>
-      <tr><td>Hall</td><td>≈ 17′6″ × 14′9″</td><td>North-centre</td><td><b>D glass from Ghar v7</b> on the east, 12′ × 8′6″; one north window on the D's lines</td><td>5′ teak pivot main door in the middle of the D</td></tr>
+      <tr><td>Hall</td><td>≈ 17′6″ × 14′9″</td><td>North-centre</td><td><b>D glass from Ghar v7</b> on the north, 14′8″ × 9′, centre panels slide</td><td>4′ solid teak main door from the sit-out</td></tr>
       <tr><td>Bedroom 1</td><td>14′5″ × 14′0″</td><td>NW</td><td>North 6′, west 6′</td><td>3′6″ from the hall</td></tr>
       <tr><td>Store</td><td>8′6″ × 5′6″</td><td>East</td><td>East 3′</td><td>3′ from the kitchen</td></tr>
       <tr><td>Temple</td><td>5′6″ × 2′0″ niche</td><td>East</td><td>—</td><td>Opens to the lobby (you face east while praying)</td></tr>
@@ -127,11 +127,11 @@ th{font:500 .72rem var(--body);letter-spacing:.1em;text-transform:uppercase;colo
   </table></div>
 
   <div class="card"><h3>How the D was made to sit right</h3><ol>
-    <li><span class="pill good">✓</span> <b>No square glass beside the D.</b> The D is the only big glass on the front, so it reads as the feature.</li>
-    <li><span class="pill good">✓</span> <b>One set of lines.</b> The hall's north window starts at the D's spring (2′7″), has a bar at the D's door head (7′) and stops at the D's crown (8′6″). The kitchen and store windows on the front stop at 7′ too.</li>
-    <li><span class="pill good">✓</span> <b>Solid wall around it:</b> 1′ either side of the D, so it isn't jammed against anything.</li>
-    <li><span class="pill good">✓</span> <b>Framed from inside:</b> teak lining through the whole depth of the wall, and the north window gets the same teak + charcoal frame.</li>
-    <li><span class="pill warn">?</span> The 2 glass panes beside the main door should be toughened laminated glass (security). The store shrinks to 5′6″ deep because the sit-out now sits where its front was.</li>
+    <li><span class="pill good">✓</span> <b>D on the north, door on the front.</b> North glass gets light without the sun's heat. The main door is a plain solid teak door, so it feels like a proper main door and nobody at the door looks into the hall.</li>
+    <li><span class="pill good">✓</span> <b>No square glass beside the D.</b> It is the only opening in the hall's north wall, with 1′ of solid wall at each end.</li>
+    <li><span class="pill good">✓</span> <b>One line at 7′.</b> The main door, the D's door bar and the front windows all stop at 7′.</li>
+    <li><span class="pill good">✓</span> <b>A real sleeping-D:</b> 14′8″ wide × 9′ tall, close to v7's 17′ × 10′, with teak lining through the wall inside and out.</li>
+    <li><span class="pill warn">?</span> The D looks onto the 3′3″ north strip, so from inside you see the boundary wall and sky. Creepers or a painted boundary wall there make the view. The store shrinks to 5′6″ deep because the sit-out now sits where its front was.</li>
   </ol></div>
 </div>
 
@@ -239,7 +239,7 @@ function build(scene){
   for(const [x1,y1,x2,y2,ops] of [[-2.25,-4,54.75,-4,[]],[-2.25,39,54.75,39,[]],[-2.25,-4,-2.25,39,[]],[54.75,-4,54.75,39,[O(22,33,4.5)]]]){
     wall(s,null,x1,y1,x2,y2,0,4.5,ops); wall(s,null,x1,y1,x2,y2,4.5,.3,ops.map(o=>({...o,head:.3})),{t:.95,mat:M.char});}
   for(let k=0;k<9;k++) box(s,54.65,54.85,22.1,32.9,.5+k*.58,.86+k*.58,M.steel);
-  label('S','Gate (east)','road side',54.75,27.5,8); label('S','D glass + main door','from Ghar v7 · 12′ × 8′6″',35.5,27.6,G0+12.4);
+  label('S','Gate (east)','road side',54.75,27.5,8); label('S','Main door','solid teak · 4′',36.5,27.6,G0+8.6); label('S','D glass','from Ghar v7 · 14′8″ × 9′',23.95,36.2,G0+11.8);
 
   box(g,-.5,38.25,-.5,35.5,0,G0-.06,M.plinth);
   for(const r of GROUND) box(g,r.x0,r.x1,r.y0,r.y1,G0-.06+(r.lift||0),G0+(r.lift||0),M[r.f],false);
@@ -247,12 +247,13 @@ function build(scene){
   // exterior
   wall(g,'G',0,0,37.75,0,G0,GH,[W(3,8,3,7.5),W(14.25,17.75,6,9.5),W(23,26.5,6,9.5)],{out:-1});
   wall(g,'G',37.75,0,37.75,20.25,G0,GH,[W(10.5,14,3.5,7),W(15.5,18.5,4,7)],{out:1});              // kitchen + store on the front, heads on the D's 7' line
-  wall(g,'G',0,35,32.75,35,G0,GH,[W(5.5,11.5,3,7.5),W(21,27,2.6,8.5)],{out:1});                    // north: bedroom 1 + the hall window on the D's lines
-  frameWin(g,35,21,27,2.6,8.5,G0,7);
+  // north: bedroom 1 window + the v7 sleeping-D across the hall (north light, no sun heat); centre pair slides for air
+  wall(g,'G',0,35,32.75,35,G0,GH,[W(5.5,11.5,3,7),{...W(16.6,31.3,0,GH),dg:true}],{out:1});
+  dGlass(g,16.6,31.3,35,G0,{spring:3,rise:6,door:7,top:GH,depth:.6,fw:.6});
   wall(g,'G',0,0,0,35,G0,GH,[W(4.5,9.5,3,7.5),W(16,18,5.5,7.5),W(25.5,31.5,3,7.5)],{out:-1});      // west: bedroom 2, WC, bedroom 1
-  // front of the hall = the v7 sleeping-D with the teak main door in its centre, behind the 5' sit-out
-  wall(g,'G',32.75,20.25,32.75,35.375,G0,GH,[{...W(21.6,33.6,0,GH),dg:true}]);
-  dGlassEast(g,32.75,21.6,33.6,G0,{spring:2.6,rise:5.9,door:7,dw:5,top:GH,depth:.9,fw:.6,pivot:true,noFloor:true});
+  // front of the hall: plain solid teak main door, 4' x 7', centred under the sit-out
+  wall(g,'G',32.75,20.25,32.75,35.375,G0,GH,[D(25.6,29.6,7,{panel:true,flip:true})]);
+  box(g,32.86,33.0,28.75,28.9,G0+2.2,G0+5.6,M.brass);                                               // brass pull
   wall(g,'G',26.5,20.25,38.125,20.25,G0,GH,[],{extend:false});                                      // store/temple north = sit-out south
   box(g,36.85,37.75,34.1,35,G0,G1,M.char); // corner column
   box(g,32.35,38.15,20.25,35.4,G1,G1+.5,M.char); // sit-out roof slab edge
@@ -319,7 +320,7 @@ if(renderer){
   build(scene);
   const controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.maxPolarAngle=Math.PI*.495; controls.minDistance=20; controls.maxDistance=250;
   const CAM={outside:[[96,40,74],[24,8,24]],ground:[[78,64,-24],[19,4,17]],first:[[-38,66,-22],[15,8,12]],
-    dglass:[[55,7.5,23],[33,6.4,28.2]],hall:[[16.6,G0+5.4,22],[32.75,G0+4.4,30]]};
+    dglass:[[27,18,57],[23.95,6.5,35]],hall:[[18.5,G0+5.4,21.6],[25,G0+4.6,35]]};
   const setCam=v=>{const inside=v==='hall'; camera.fov=inside?62:38; camera.updateProjectionMatrix(); controls.minDistance=inside?2:20;
     camera.position.copy(P(...CAM[v][0])); controls.target.copy(P(...CAM[v][1])); controls.update();};
   const apply=()=>{const v=state.view; G.groundRoof.visible=v!=='ground'; G.first.visible=v!=='ground'; G.firstRoof.visible=v!=='ground'&&v!=='first';
@@ -341,7 +342,7 @@ function walls(svg,fk){for(const w of wallLog.filter(w=>w.fk===fk)){let cur=w.a0
   const seg=(s,e)=>{if(e-s<.01)return;w.horiz?el('rect',{x:s,y:sy(w.c+w.t/2),width:e-s,height:w.t,class:'wall'},svg):el('rect',{x:w.c-w.t/2,y:sy(e),width:w.t,height:e-s,class:'wall'},svg);};
   for(const op of w.ops){seg(cur,op.a);
     if(op.kind==='win') w.horiz?el('rect',{x:op.a,y:sy(w.c+w.t/2),width:op.b-op.a,height:w.t,class:'win'},svg):el('rect',{x:w.c-w.t/2,y:sy(op.b),width:w.t,height:op.b-op.a,class:'win'},svg);
-    if(op.kind==='door'){const r=op.b-op.a;let H,Lp,E;if(w.horiz){H=[op.a,w.c];Lp=[op.a,w.c-r];E=[op.b,w.c];}else{H=[w.c,op.a];Lp=[w.c+r,op.a];E=[w.c,op.b];}
+    if(op.kind==='door'){const r=op.b-op.a,sg=op.flip?-1:1;let H,Lp,E;if(w.horiz){H=[op.a,w.c];Lp=[op.a,w.c-sg*r];E=[op.b,w.c];}else{H=[w.c,op.a];Lp=[w.c+sg*r,op.a];E=[w.c,op.b];}
       const h=[H[0],sy(H[1])],l=[Lp[0],sy(Lp[1])],e=[E[0],sy(E[1])],cr=(l[0]-h[0])*(e[1]-h[1])-(l[1]-h[1])*(e[0]-h[0]);
       el('path',{d:`M${h[0]},${h[1]} L${l[0]},${l[1]} A${r},${r} 0 0 ${cr>0?1:0} ${e[0]},${e[1]}`,class:'door'},svg);}
     cur=op.b;}
@@ -359,8 +360,8 @@ function plan(id,list,fk,extra){const h=document.getElementById(id);const svg=el
   extra&&extra(svg); walls(svg,fk); for(const r of list) if(!r.skip) txt(svg,r); north(svg);
   el('path',{d:`M0,${sy(-1.8)} L37.75,${sy(-1.8)}`,class:'thin'},svg); el('text',{x:18.9,y:sy(-1.8)+1.1,'text-anchor':'middle',class:'t-dim'},svg,"37′9″ (E–W)");}
 plan('plan-g',GROUND,'G',svg=>{stair(svg);
-  el('path',{d:`M33.125,${sy(21)} L34.025,${sy(21)} L34.025,${sy(34.2)} L33.125,${sy(34.2)}`,class:'dash'},svg);
-  el('text',{x:35.45,y:sy(23),'text-anchor':'middle',class:'t-acc'},svg,'D glass');el('text',{x:24.75,y:sy(10.6),'text-anchor':'middle',class:'t-acc'},svg,'UP ↓');
+  el('path',{d:`M16,${sy(35.375)} L16,${sy(35.975)} L31.9,${sy(35.975)} L31.9,${sy(35.375)}`,class:'dash'},svg);
+  el('text',{x:23.95,y:sy(35.975)-.35,'text-anchor':'middle',class:'t-acc'},svg,'D glass (from v7)');el('text',{x:24.75,y:sy(10.6),'text-anchor':'middle',class:'t-acc'},svg,'UP ↓');
   el('path',{d:`M44.5,${sy(27.6)} L40.6,${sy(27.6)}`,class:'thin'},svg);el('path',{d:`M40.2,${sy(27.6)} l1,-.6 l0,1.2 z`,class:'acc'},svg);el('text',{x:42.4,y:sy(28.8),'text-anchor':'middle',class:'t-acc'},svg,'ENTRY');});
 plan('plan-f',[{n:'',x0:0,y0:0,x1:37.75,y1:35,k:'out',skip:true},...FIRST],'F',svg=>{stair(svg);el('text',{x:27,y:sy(25),'text-anchor':'middle',class:'t-name'},svg,'Open terrace');});
 </script>

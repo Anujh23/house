@@ -13,5 +13,5 @@ Design for an east-facing G+1 family home near Pilani, Rajasthan.
 ## Versions
 
 - **v7** "The Long Room": https://anujh23.github.io/house/
-- **v8** east-facing, D glass as the front door: https://anujh23.github.io/house/v8.html
+- **v8** east-facing, D glass on the north, solid teak main door: https://anujh23.github.io/house/v8.html
 - **v6**: https://anujh23.github.io/house/v6.html
